@@ -3,6 +3,7 @@ package com.dilmah.hostel.model;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
+@Entity
 public class Guardian {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

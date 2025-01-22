@@ -1,102 +1,107 @@
 package com.dilmah.hostel.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-public class Hosteller {
-
-    @Id
-    @Column(length = 15, nullable = false, unique = true)
-    private String userID;
-
-    @Column(length = 25, nullable = false)
-    private String fullName;
-
+public class Hosteller extends User {
     @ManyToOne
     @JoinColumn(name = "roomNumber")
     private Room room;
-
-    @Column(length = 15, nullable = false)
-    private String password;
-
-    @Column(length = 12, nullable = false)
-    private String mobile;
     
-    @OneToMany(mappedBy = "hostellers", cascade = CascadeType.DETACH)
+    @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<Guardian> gurdians;
+    
+    @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
+    private List<Complaint> complaints;
+    
+    @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
+    private List<Fee> fees;
+    
+    @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
+    private List<Offense> Offense;
+    
+    @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
+    private List<Fine> fines;
+    
+    @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
+    private List<HostellerFacilityProfile> facilityProfile;
     
     @Column(nullable = false)
     private BigDecimal salary;
 
+    @Column(nullable = false)
     private Boolean isSick = false;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime assigned;
+	public Room getRoom() {
+		return room;
+	}
 
-    // Getters and setters
-    public String getUserID() {
-        return userID;
-    }
+	public void setRoom(Room room) {
+		this.room = room;
+	}
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
+	public List<Guardian> getGurdians() {
+		return gurdians;
+	}
 
-    public String getFullName() {
-        return fullName;
-    }
+	public void setGurdians(List<Guardian> gurdians) {
+		this.gurdians = gurdians;
+	}
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+	public BigDecimal getSalary() {
+		return salary;
+	}
 
-    public Room getRoom() {
-        return room;
-    }
+	public void setSalary(BigDecimal salary) {
+		this.salary = salary;
+	}
 
-    public void setRoom(Room room) {
-        this.room = room;
-    }
+	public Boolean getIsSick() {
+		return isSick;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setIsSick(Boolean isSick) {
+		this.isSick = isSick;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public List<Complaint> getComplaints() {
+		return complaints;
+	}
 
-    public String getMobile() {
-        return mobile;
-    }
+	public void setComplaints(List<Complaint> complaints) {
+		this.complaints = complaints;
+	}
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
+	public List<Fee> getFees() {
+		return fees;
+	}
 
-    public BigDecimal getSalary() {
-        return salary;
-    }
+	public void setFees(List<Fee> fees) {
+		this.fees = fees;
+	}
 
-    public void setSalary(BigDecimal salary) {
-        this.salary = salary;
-    }
+	public List<Fine> getFines() {
+		return fines;
+	}
 
-    public Boolean getIsSick() {
-        return isSick;
-    }
+	public void setFines(List<Fine> fines) {
+		this.fines = fines;
+	}
 
-    public void setIsSick(Boolean isSick) {
-        this.isSick = isSick;
-    }
+	public List<HostellerFacilityProfile> getFacilityProfile() {
+		return facilityProfile;
+	}
 
-    public LocalDateTime getAssigned() {
-        return assigned;
-    }
+	public void setFacilityProfile(List<HostellerFacilityProfile> facilityProfile) {
+		this.facilityProfile = facilityProfile;
+	}
 
-    public void setAssigned(LocalDateTime assigned) {
-        this.assigned = assigned;
-    }
+	public List<Offense> getOffense() {
+		return Offense;
+	}
+
+	public void setOffense(List<Offense> offense) {
+		Offense = offense;
+	}
 }
