@@ -31,7 +31,6 @@ public class AuthController {
 		try {
 			ipAddress = ClientIpExtractor.getClientIp(request);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return jwtUtil.generateToken(username, role, ipAddress);
