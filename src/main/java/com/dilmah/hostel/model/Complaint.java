@@ -23,7 +23,7 @@ public class Complaint {
     @Column(length = 10, nullable = false)
     private String status;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createAt;
 
     public int getComplaintID() {

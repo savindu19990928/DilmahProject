@@ -17,7 +17,7 @@ public class FoodMenu {
     @Column(length = 15, nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDate menuDate;
 
     public Long getMenuItemID() {

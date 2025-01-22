@@ -28,7 +28,7 @@ public class HostellerFacilityProfile {
     @Column(length = 225, nullable = true)
     private String description;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime joinedAt;
 
     public int getFacilityProfileID() {

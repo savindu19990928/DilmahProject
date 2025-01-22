@@ -27,7 +27,7 @@ public class FacilityIncomeExpense {
     @Column(length = 225, nullable = true)
     private String description;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
     public long getInExDI() {

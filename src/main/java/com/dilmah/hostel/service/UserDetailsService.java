@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -73,5 +72,10 @@ public class UserDetailsService implements org.springframework.security.core.use
             role = "ROLE_HOSTELLER";
         }
         return List.of(new SimpleGrantedAuthority(role));
+    }
+    
+    public String registerUser(SuperAdmin user) {
+    	superAdminRepository.save((SuperAdmin) user);
+    	return "SuperAdmin registered successfully!";
     }
 }

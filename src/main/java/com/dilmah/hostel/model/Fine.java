@@ -25,7 +25,7 @@ public class Fine {
     @Column(nullable = false)
     private boolean paid;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime issued;
 
     public long getFineID() {

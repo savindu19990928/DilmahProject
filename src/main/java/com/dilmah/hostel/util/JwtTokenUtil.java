@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenUtil {
 
-    private final String secretKey = "nibmgrouponedilmahproject";
+    private final String secretKey = "nibmgrouponedilmahproject@1999/09/28";
     private final long expirationTime = 1000L * 60 * 60 * 24 * 31; // 1 month
     private SecretKey key;
     
@@ -37,7 +37,7 @@ public class JwtTokenUtil {
         return Jwts.parser()
                 .verifyWith(key)
                 .build()
-                .parseSignedClaims("jwt")
+                .parseSignedClaims(token)
                 .getPayload();
     }
 

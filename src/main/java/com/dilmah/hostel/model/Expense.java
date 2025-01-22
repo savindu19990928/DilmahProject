@@ -17,7 +17,7 @@ public class Expense {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
     public long getExpenseID() {

@@ -16,7 +16,7 @@ public class Instruction {
     @Column(length = 225, nullable = false)
     private String description;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
     // Getters and Setters

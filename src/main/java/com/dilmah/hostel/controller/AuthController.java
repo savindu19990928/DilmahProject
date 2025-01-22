@@ -1,15 +1,25 @@
 package com.dilmah.hostel.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.dilmah.hostel.model.SuperAdmin;
+import com.dilmah.hostel.service.UserDetailsService;
 import com.dilmah.hostel.util.ClientIpExtractor;
 import com.dilmah.hostel.util.JwtTokenUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
+import com.dilmah.hostel.request.UserRegistrationRequest;
 
 @RestController
 @RequestMapping("/auth")
@@ -20,20 +30,47 @@ public class AuthController {
 
     @Autowired
     private JwtTokenUtil jwtUtil;
+    
+    @Autowired
+    private UserDetailsService userService;
 
     @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password, @RequestBody HttpServletRequest request) {
-        Authentication authenticate = authenticationManager.authenticate(
+    public ResponseEntity<?> login(@RequestBody Map<String, String> requestBody, HttpServletRequest request) {
+        try {
+            String username = requestBody.get("username");
+            String password = requestBody.get("password");
+
+            Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
-        );
-        String role = authenticate.getAuthorities().iterator().next().getAuthority();
-        String ipAddress = null;
-		try {
-			ipAddress = ClientIpExtractor.getClientIp(request);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return jwtUtil.generateToken(username, role, ipAddress);
+            );
+
+            String role = authenticate.getAuthorities().iterator().next().getAuthority();
+            String ipAddress = ClientIpExtractor.getClientIp(request);
+
+            String token = jwtUtil.generateToken(username, role, ipAddress);
+            return ResponseEntity.ok(Map.of("token", token));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+        }
+    }
+    
+    @PostMapping("/register")
+    public String register(@RequestBody UserRegistrationRequest request) {
+        try {
+        	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String hashedPassword = passwordEncoder.encode(request.pass);
+        	SuperAdmin superAdmin = new SuperAdmin();
+        	superAdmin.setUserID(request.userID);
+            superAdmin.setFullName(request.fullName);
+            superAdmin.setPassword(hashedPassword);
+            superAdmin.setContactDetails(request.contactDetails);
+            userService.registerUser(superAdmin);
+            return "User registered successfully!";
+        } catch (Exception e) {
+            return "Registration failed: " + e.getMessage();
+        }
     }
 }
 

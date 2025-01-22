@@ -21,7 +21,7 @@ public abstract class User {
     @Column(length = 12, nullable = false)
     private String contactDetails;
     
-    @Column(nullable = false,columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime assigned;
     
     @OneToMany(mappedBy = "creator", cascade = CascadeType.DETACH)

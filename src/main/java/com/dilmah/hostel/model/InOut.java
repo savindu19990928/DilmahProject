@@ -14,7 +14,7 @@ public class InOut {
     @JoinColumn(name = "userID", nullable = false)
     private Hosteller hosteller;
 
-    @Column(nullable = false,columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
     
     @Column(nullable = false)

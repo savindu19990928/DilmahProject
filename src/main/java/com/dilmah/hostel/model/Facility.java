@@ -17,8 +17,7 @@ public class Facility {
     @Column(length = 225, nullable = false)
     private String description;
 
-    @Column(
-        nullable = false, 
+    @Column( 
         columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
     )
     private LocalDateTime createdAt;

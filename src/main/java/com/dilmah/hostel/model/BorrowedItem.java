@@ -27,7 +27,7 @@ public class BorrowedItem {
     @Column(length = 15, nullable = false)
     private String status;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime borrowedAt;
 
     @Column(nullable = true)

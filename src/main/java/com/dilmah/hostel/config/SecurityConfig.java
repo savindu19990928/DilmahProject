@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,20 +40,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/register").permitAll()
                         .requestMatchers("/warden/**").hasRole("WARDEN")
-                        .requestMatchers("/superadmin/**").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/facilityadmin/**").hasRole("ROLE_FACILITYADMIN")
-                        .requestMatchers("/securitypersonal/**").hasRole("ROLE_SECURITYPERSONAL")
-                        .requestMatchers("/hosteller/**").hasRole("ROLE_HOSTELLER")
+                        .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
+                        .requestMatchers("/facilityadmin/**").hasRole("FACILITYADMIN")
+                        .requestMatchers("/securitypersonal/**").hasRole("SECURITYPERSONAL")
+                        .requestMatchers("/hosteller/**").hasRole("HOSTELLER")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(withDefaults());
-
-        http.addFilterBefore(rateLimitingFilter(), UsernamePasswordAuthenticationFilter.class);
+                .httpBasic(withDefaults())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(rateLimitingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -79,7 +81,7 @@ public class SecurityConfig {
 
     private Bucket createNewBucket() {
     	return Bucket.builder()
-    			.addLimit(limit -> limit.capacity(100).refillGreedy(20, Duration.ofSeconds(1)))
+    			.addLimit(limit -> limit.capacity(10000).refillGreedy(2000, Duration.ofSeconds(1)))
     			.build();
     }
 }
