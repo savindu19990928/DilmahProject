@@ -1,5 +1,10 @@
 package com.dilmah.hostel.config;
 
+import io.github.bucket4j.Bucket;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,11 +13,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class SecurityConfig {
+
+    private final ConcurrentMap<String, Bucket> buckets = new ConcurrentHashMap<>();
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,6 +52,34 @@ public class SecurityConfig {
                 )
                 .httpBasic(withDefaults());
 
+        http.addFilterBefore(rateLimitingFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
+    }
+
+    @Bean
+    public OncePerRequestFilter rateLimitingFilter() {
+        return new OncePerRequestFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                    throws ServletException, IOException {
+
+                String clientIP = request.getRemoteAddr();
+                Bucket bucket = buckets.computeIfAbsent(clientIP, k -> createNewBucket());
+
+                if (bucket.tryConsume(1)) {
+                    filterChain.doFilter(request, response);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().write("Too many requests. Please try again later.");
+                }
+            }
+        };
+    }
+
+    private Bucket createNewBucket() {
+    	return Bucket.builder()
+    			.addLimit(limit -> limit.capacity(100).refillGreedy(20, Duration.ofSeconds(1)))
+    			.build();
     }
 }
