@@ -3,6 +3,8 @@ package com.dilmah.hostel.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -21,7 +23,8 @@ public abstract class User {
     @Column(length = 12, nullable = false)
     private String contactDetails;
     
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime assigned;
     
     @OneToMany(mappedBy = "creator", cascade = CascadeType.DETACH)
