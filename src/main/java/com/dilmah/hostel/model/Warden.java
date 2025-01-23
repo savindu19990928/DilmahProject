@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 
 @Entity
 public class Warden extends User {
-    @Column(length = 25, nullable = false)
+    @Column(length = 25, nullable = true)
     private String inChargeName;
 
-    @Column(length = 12, nullable = false)
+    @Column(length = 12, nullable = true)
     private String inChargeMobile;
 
 	public String getInChargeName() {

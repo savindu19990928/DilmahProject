@@ -8,12 +8,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
+    @Autowired
+    private UserRepository userRepository;
+    
     @Autowired
     private WardenRepository wardenRepository;
 
@@ -40,23 +43,35 @@ public class UserDetailsService implements org.springframework.security.core.use
     }
 
     private User findUserByUsername(String username) {
-        Optional<? extends User> user = wardenRepository.findByUserID(username);
-        if (user.isPresent()) return user.get();
-
-        user = superAdminRepository.findByUserID(username);
-        if (user.isPresent()) return user.get();
-
-        user = facilityAdminRepository.findByUserID(username);
-        if (user.isPresent()) return user.get();
-
-        user = securityPersonalRepository.findByUserID(username);
-        if (user.isPresent()) return user.get();
-
-        user = hostellerRepository.findByUserID(username);
-        if (user.isPresent()) return user.get();
-
-        throw new UsernameNotFoundException("User not found with username: " + username);
+        return userRepository.findByUserID(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
+    
+    private SuperAdmin findSuperAdminByUsername(String username) {
+        return superAdminRepository.findByUserID(username)
+                .orElseThrow(() -> new UsernameNotFoundException("SuperAdmin not found with username: " + username));
+    }
+
+    private Warden findWardenByUsername(String username) {
+        return wardenRepository.findByUserID(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Warden not found with username: " + username));
+    }
+
+    private FacilityAdmin findFacilityAdminByUsername(String username) {
+        return facilityAdminRepository.findByUserID(username)
+                .orElseThrow(() -> new UsernameNotFoundException("FacilityAdmin not found with username: " + username));
+    }
+
+    private SecurityPersonal findSecurityPersonalByUsername(String username) {
+        return securityPersonalRepository.findByUserID(username)
+                .orElseThrow(() -> new UsernameNotFoundException("SecurityPersonal not found with username: " + username));
+    }
+
+    private Hosteller findHostellerByUsername(String username) {
+        return hostellerRepository.findByUserID(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Hosteller not found with username: " + username));
+    }
+
 
     private List<GrantedAuthority> getUserRoles(User user) {
         String role = null;
@@ -108,29 +123,40 @@ public class UserDetailsService implements org.springframework.security.core.use
         }
     }
     
-    private void deleteUserFromRepository(User user) {
-        if (user instanceof Warden) {
-            wardenRepository.delete((Warden) user);
-        } else if (user instanceof SuperAdmin) {
-            superAdminRepository.delete((SuperAdmin) user);
-        } else if (user instanceof FacilityAdmin) {
-            facilityAdminRepository.delete((FacilityAdmin) user);
-        } else if (user instanceof SecurityPersonal) {
-            securityPersonalRepository.delete((SecurityPersonal) user);
-        } else if (user instanceof Hosteller) {
-            hostellerRepository.delete((Hosteller) user);
-        } else {
-            throw new IllegalArgumentException("Cannot delete user of unknown type: " + user.getClass().getSimpleName());
-        }
-    }
-    
-    public String deleteUser(String userID) {
-        User existingUser = findUserByUsername(userID);
+    public String deleteUser(String userID, String userType) {
+        switch (userType.toLowerCase()) {
+            case "superadmin":
+                SuperAdmin superAdmin = findSuperAdminByUsername(userID);
+                superAdminRepository.delete(superAdmin);
+                break;
 
-        deleteUserFromRepository(existingUser);
-        return "User deleted successfully!";
+            case "warden":
+                Warden warden = findWardenByUsername(userID);
+                wardenRepository.delete(warden);
+                break;
+
+            case "facilityadmin":
+                FacilityAdmin facilityAdmin = findFacilityAdminByUsername(userID);
+                facilityAdminRepository.delete(facilityAdmin);
+                break;
+
+            case "securitypersonal":
+                SecurityPersonal securityPersonal = findSecurityPersonalByUsername(userID);
+                securityPersonalRepository.delete(securityPersonal);
+                break;
+
+            case "hosteller":
+                Hosteller hosteller = findHostellerByUsername(userID);
+                hostellerRepository.delete(hosteller);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid user type: " + userType);
+        }
+
+        return userType + " with ID " + userID + " deleted successfully!";
     }
-    
+
     public String updateUser(String userID, User updatedUser) {
         User existingUser = findUserByUsername(userID);
         

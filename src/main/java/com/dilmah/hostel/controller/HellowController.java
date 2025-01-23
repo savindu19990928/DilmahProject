@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/superadmin")
 public class HellowController {
-
     @PostMapping("/login")
     public String login() {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
