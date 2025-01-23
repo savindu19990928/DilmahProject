@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 public class Fee {
 
@@ -32,7 +34,8 @@ public class Fee {
     @Column(nullable = false)
     private boolean paid;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime issued;
 
     public long getFeeID() {
@@ -93,9 +96,5 @@ public class Fee {
 
     public LocalDateTime getIssued() {
         return issued;
-    }
-
-    public void setIssued(LocalDateTime issued) {
-        this.issued = issued;
     }
 }

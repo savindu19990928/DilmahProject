@@ -81,7 +81,7 @@ public class SecurityConfig {
 
     private Bucket createNewBucket() {
     	return Bucket.builder()
-    			.addLimit(limit -> limit.capacity(10000).refillGreedy(2000, Duration.ofSeconds(1)))
+    			.addLimit(limit -> limit.capacity(50).refillGreedy(10, Duration.ofSeconds(1)))
     			.build();
     }
 }

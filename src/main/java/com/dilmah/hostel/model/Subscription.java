@@ -3,7 +3,10 @@ package com.dilmah.hostel.model;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 public class Subscription {
@@ -30,6 +33,10 @@ public class Subscription {
     
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.DETACH)
     private List<Fee> fees;
+    
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public int getSubscriptionID() {
         return subscriptionID;
@@ -85,5 +92,9 @@ public class Subscription {
 
 	public void setFees(List<Fee> fees) {
 		this.fees = fees;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
 	}
 }

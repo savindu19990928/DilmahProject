@@ -3,6 +3,8 @@ package com.dilmah.hostel.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 public class FoodMenu {
 
@@ -17,7 +19,8 @@ public class FoodMenu {
     @Column(length = 15, nullable = false)
     private String name;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false)
     private LocalDate menuDate;
 
     public Long getMenuItemID() {

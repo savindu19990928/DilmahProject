@@ -14,8 +14,6 @@ public class ClientIpExtractor {
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
         }
-
-        // Handle cases where X-Forwarded-For contains multiple IPs (e.g., "client, proxy1, proxy2")
         if (ipAddress != null && ipAddress.contains(",")) {
             ipAddress = ipAddress.split(",")[0].trim();
         }

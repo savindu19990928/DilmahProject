@@ -1,5 +1,9 @@
 package com.dilmah.hostel.model;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -21,6 +25,10 @@ public class FacilityItem {
 
     @Column(nullable = false)
     private float quantity;
+    
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime broughtAt;
 
     public int getItemID() {
         return itemID;
@@ -61,4 +69,8 @@ public class FacilityItem {
     public void setQuantity(float quantity) {
         this.quantity = quantity;
     }
+
+	public LocalDateTime getBroughtAt() {
+		return broughtAt;
+	}
 }

@@ -3,6 +3,8 @@ package com.dilmah.hostel.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 public class InOut {
 
@@ -14,7 +16,8 @@ public class InOut {
     @JoinColumn(name = "userID", nullable = false)
     private Hosteller hosteller;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @Column(nullable = false)
@@ -89,9 +92,5 @@ public class InOut {
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
 	}
 }

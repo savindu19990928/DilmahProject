@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 public class Facility {
 
@@ -17,9 +19,8 @@ public class Facility {
     @Column(length = 225, nullable = false)
     private String description;
 
-    @Column( 
-        columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-    )
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @OneToMany(mappedBy = "facility", cascade = CascadeType.DETACH)
@@ -69,10 +70,6 @@ public class Facility {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
 	public List<FacilityIncomeExpense> getFinances() {

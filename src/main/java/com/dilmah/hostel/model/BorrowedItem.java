@@ -3,6 +3,8 @@ package com.dilmah.hostel.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 public class BorrowedItem {
 
@@ -27,7 +29,8 @@ public class BorrowedItem {
     @Column(length = 15, nullable = false)
     private String status;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime borrowedAt;
 
     @Column(nullable = true)
@@ -83,10 +86,6 @@ public class BorrowedItem {
 
     public LocalDateTime getBorrowedAt() {
         return borrowedAt;
-    }
-
-    public void setBorrowedAt(LocalDateTime borrowedAt) {
-        this.borrowedAt = borrowedAt;
     }
 
     public LocalDateTime getReturnedAt() {

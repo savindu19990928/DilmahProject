@@ -66,10 +66,6 @@ public abstract class User {
 		return assigned;
 	}
 
-	public void setAssigned(LocalDateTime assigned) {
-		this.assigned = assigned;
-	}
-
 	public List<Fine> getFineCreations() {
 		return fineCreations;
 	}

@@ -1,6 +1,9 @@
 package com.dilmah.hostel.model;
 
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -15,7 +18,8 @@ public class Guardian {
 	@Column(length = 12, nullable = false)
 	private String mobile;
 	
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime assigned;
     
     @ManyToOne
@@ -48,10 +52,6 @@ public class Guardian {
 
 	public LocalDateTime getAssigned() {
 		return assigned;
-	}
-
-	public void setAssigned(LocalDateTime assigned) {
-		this.assigned = assigned;
 	}
 
 	public Hosteller getHosteller() {

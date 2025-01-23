@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 public class HostellerFacilityProfile {
 
@@ -28,7 +30,8 @@ public class HostellerFacilityProfile {
     @Column(length = 225, nullable = true)
     private String description;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime joinedAt;
 
     public int getFacilityProfileID() {
@@ -73,10 +76,6 @@ public class HostellerFacilityProfile {
 
     public LocalDateTime getJoinedAt() {
         return joinedAt;
-    }
-
-    public void setJoinedAt(LocalDateTime joinedAt) {
-        this.joinedAt = joinedAt;
     }
 
 	public List<BorrowedItem> getBorrowedItems() {

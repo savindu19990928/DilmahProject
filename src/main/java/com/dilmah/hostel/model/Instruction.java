@@ -3,6 +3,8 @@ package com.dilmah.hostel.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 public class Instruction {
 
@@ -16,7 +18,8 @@ public class Instruction {
     @Column(length = 225, nullable = false)
     private String description;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     // Getters and Setters
@@ -46,9 +49,5 @@ public class Instruction {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

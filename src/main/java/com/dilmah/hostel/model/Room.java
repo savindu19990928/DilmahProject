@@ -1,7 +1,11 @@
 package com.dilmah.hostel.model;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 public class Room {
@@ -16,6 +20,10 @@ public class Room {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.DETACH)
     private List<Hosteller> hostellers;
+    
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
     
     public Long getRoomNumber() {
         return roomNumber;
@@ -48,5 +56,9 @@ public class Room {
     public void setHostellers(List<Hosteller> hostellers) {
         this.hostellers = hostellers;
     }
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
 }
 

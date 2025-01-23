@@ -1,5 +1,9 @@
 package com.dilmah.hostel.model;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +22,10 @@ public class Service {
 
     @Column(length = 225, nullable = false)
     private String description;
+    
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public int getServiceID() {
         return serviceID;
@@ -50,4 +58,8 @@ public class Service {
     public void setDescription(String description) {
         this.description = description;
     }
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
 }
