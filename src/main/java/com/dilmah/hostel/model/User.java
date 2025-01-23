@@ -69,8 +69,4 @@ public abstract class User {
 	public List<Fine> getFineCreations() {
 		return fineCreations;
 	}
-
-	public void setFineCreations(List<Fine> fineCreations) {
-		this.fineCreations = fineCreations;
-	}
 }

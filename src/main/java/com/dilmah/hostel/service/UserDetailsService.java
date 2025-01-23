@@ -74,8 +74,118 @@ public class UserDetailsService implements org.springframework.security.core.use
         return List.of(new SimpleGrantedAuthority(role));
     }
     
-    public String registerUser(SuperAdmin user) {
-    	superAdminRepository.save((SuperAdmin) user);
-    	return "SuperAdmin registered successfully!";
+    public String registerUser(User user) {
+        if (isUserIdExists(user.getUserID())) {
+            throw new IllegalArgumentException("User with ID " + user.getUserID() + " already exists.");
+        }
+        
+        saveUserToRepository(user);
+
+        return user.getClass().getSimpleName() + " registered successfully!";
+    }
+
+    private boolean isUserIdExists(String userID) {
+        return wardenRepository.existsById(userID)
+                || superAdminRepository.existsById(userID)
+                || facilityAdminRepository.existsById(userID)
+                || securityPersonalRepository.existsById(userID)
+                || hostellerRepository.existsById(userID);
+    }
+
+    private void saveUserToRepository(User user) {
+        if (user instanceof Warden) {
+            wardenRepository.save((Warden) user);
+        } else if (user instanceof SuperAdmin) {
+            superAdminRepository.save((SuperAdmin) user);
+        } else if (user instanceof FacilityAdmin) {
+            facilityAdminRepository.save((FacilityAdmin) user);
+        } else if (user instanceof SecurityPersonal) {
+            securityPersonalRepository.save((SecurityPersonal) user);
+        } else if (user instanceof Hosteller) {
+            hostellerRepository.save((Hosteller) user);
+        } else {
+            throw new IllegalArgumentException("Cannot register user of unknown type: " + user.getClass().getSimpleName());
+        }
+    }
+    
+    private void deleteUserFromRepository(User user) {
+        if (user instanceof Warden) {
+            wardenRepository.delete((Warden) user);
+        } else if (user instanceof SuperAdmin) {
+            superAdminRepository.delete((SuperAdmin) user);
+        } else if (user instanceof FacilityAdmin) {
+            facilityAdminRepository.delete((FacilityAdmin) user);
+        } else if (user instanceof SecurityPersonal) {
+            securityPersonalRepository.delete((SecurityPersonal) user);
+        } else if (user instanceof Hosteller) {
+            hostellerRepository.delete((Hosteller) user);
+        } else {
+            throw new IllegalArgumentException("Cannot delete user of unknown type: " + user.getClass().getSimpleName());
+        }
+    }
+    
+    public String deleteUser(String userID) {
+        User existingUser = findUserByUsername(userID);
+
+        deleteUserFromRepository(existingUser);
+        return "User deleted successfully!";
+    }
+    
+    public String updateUser(String userID, User updatedUser) {
+        User existingUser = findUserByUsername(userID);
+        
+        if (updatedUser.getFullName() != null) {
+            existingUser.setFullName(updatedUser.getFullName());
+        }
+        if (updatedUser.getPassword() != null) {
+            existingUser.setPassword(updatedUser.getPassword());
+        }
+        if (updatedUser.getContactDetails() != null) {
+            existingUser.setContactDetails(updatedUser.getContactDetails());
+        }
+        
+        
+        if (existingUser instanceof Warden && updatedUser instanceof Warden) {
+            Warden existingWarden = (Warden) existingUser;
+            Warden updatedWarden = (Warden) updatedUser;
+            if (updatedWarden.getInChargeName() != null) {
+                existingWarden.setInChargeName(updatedWarden.getInChargeName());
+            }
+            if (updatedWarden.getInChargeMobile() != null) {
+                existingWarden.setInChargeMobile(updatedWarden.getInChargeMobile());
+            }
+            wardenRepository.save(existingWarden);
+        } else if (existingUser instanceof SuperAdmin && updatedUser instanceof SuperAdmin) {
+            SuperAdmin existingSuperAdmin = (SuperAdmin) existingUser;
+            superAdminRepository.save(existingSuperAdmin);
+        } else if (existingUser instanceof FacilityAdmin && updatedUser instanceof FacilityAdmin) {
+            FacilityAdmin existingFacilityAdmin = (FacilityAdmin) existingUser;
+            FacilityAdmin updatedFacilityAdmin = (FacilityAdmin) updatedUser;
+
+            if (updatedFacilityAdmin.getFacility() != null) {
+                existingFacilityAdmin.setFacility(updatedFacilityAdmin.getFacility());
+            }
+            facilityAdminRepository.save(existingFacilityAdmin);
+        } else if (existingUser instanceof Hosteller && updatedUser instanceof Hosteller) {
+            Hosteller existingHosteller = (Hosteller) existingUser;
+            Hosteller updatedHosteller = (Hosteller) updatedUser;
+            if (updatedHosteller.getRoom() != null) {
+                existingHosteller.setRoom(updatedHosteller.getRoom());
+            }
+            if (updatedHosteller.getSalary() != null) {
+                existingHosteller.setSalary(updatedHosteller.getSalary());
+            }
+            if (updatedHosteller.getIsSick() != null) {
+                existingHosteller.setIsSick(updatedHosteller.getIsSick());
+            }
+            hostellerRepository.save(existingHosteller);
+        } else if (existingUser instanceof SecurityPersonal && updatedUser instanceof SecurityPersonal) {
+            SecurityPersonal existingSecurityPersonal = (SecurityPersonal) existingUser;
+            securityPersonalRepository.save(existingSecurityPersonal);
+        } else {
+            throw new IllegalArgumentException("Unknown or mismatched user type for update.");
+        }
+
+        return existingUser.getClass().getSimpleName() + " updated successfully!";
     }
 }
