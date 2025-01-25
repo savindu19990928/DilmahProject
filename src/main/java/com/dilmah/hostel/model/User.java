@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "user_type")
 public abstract class User {
     @Id
     @Column(length = 15, nullable = false, unique = true)

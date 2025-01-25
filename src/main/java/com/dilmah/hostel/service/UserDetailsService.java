@@ -42,32 +42,32 @@ public class UserDetailsService implements org.springframework.security.core.use
         );
     }
 
-    private User findUserByUsername(String username) {
+    public User findUserByUsername(String username) {
         return userRepository.findByUserID(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
     
-    private SuperAdmin findSuperAdminByUsername(String username) {
+    public SuperAdmin findSuperAdminByUsername(String username) {
         return superAdminRepository.findByUserID(username)
                 .orElseThrow(() -> new UsernameNotFoundException("SuperAdmin not found with username: " + username));
     }
 
-    private Warden findWardenByUsername(String username) {
+    public Warden findWardenByUsername(String username) {
         return wardenRepository.findByUserID(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Warden not found with username: " + username));
     }
 
-    private FacilityAdmin findFacilityAdminByUsername(String username) {
+    public FacilityAdmin findFacilityAdminByUsername(String username) {
         return facilityAdminRepository.findByUserID(username)
                 .orElseThrow(() -> new UsernameNotFoundException("FacilityAdmin not found with username: " + username));
     }
 
-    private SecurityPersonal findSecurityPersonalByUsername(String username) {
+    public SecurityPersonal findSecurityPersonalByUsername(String username) {
         return securityPersonalRepository.findByUserID(username)
                 .orElseThrow(() -> new UsernameNotFoundException("SecurityPersonal not found with username: " + username));
     }
 
-    private Hosteller findHostellerByUsername(String username) {
+    public Hosteller findHostellerByUsername(String username) {
         return hostellerRepository.findByUserID(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Hosteller not found with username: " + username));
     }
@@ -157,59 +157,91 @@ public class UserDetailsService implements org.springframework.security.core.use
         return userType + " with ID " + userID + " deleted successfully!";
     }
 
-    public String updateUser(String userID, User updatedUser) {
-        User existingUser = findUserByUsername(userID);
+    public String updateUser(String userID, User updatedUser, String userType) {
+        User existingUser;
+        
+        switch (userType.toLowerCase()) {
+            case "warden":
+                existingUser = findWardenByUsername(userID);
+                break;
+            case "superadmin":
+                existingUser = findSuperAdminByUsername(userID);
+                break;
+            case "facilityadmin":
+                existingUser = findFacilityAdminByUsername(userID);
+                break;
+            case "hosteller":
+                existingUser = findHostellerByUsername(userID);
+                break;
+            case "securitypersonal":
+                existingUser = findSecurityPersonalByUsername(userID);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown user type: " + userType);
+        }
         
         if (updatedUser.getFullName() != null) {
             existingUser.setFullName(updatedUser.getFullName());
         }
-        if (updatedUser.getPassword() != null) {
-            existingUser.setPassword(updatedUser.getPassword());
-        }
+        
         if (updatedUser.getContactDetails() != null) {
             existingUser.setContactDetails(updatedUser.getContactDetails());
         }
         
-        
-        if (existingUser instanceof Warden && updatedUser instanceof Warden) {
-            Warden existingWarden = (Warden) existingUser;
-            Warden updatedWarden = (Warden) updatedUser;
-            if (updatedWarden.getInChargeName() != null) {
-                existingWarden.setInChargeName(updatedWarden.getInChargeName());
-            }
-            if (updatedWarden.getInChargeMobile() != null) {
-                existingWarden.setInChargeMobile(updatedWarden.getInChargeMobile());
-            }
-            wardenRepository.save(existingWarden);
-        } else if (existingUser instanceof SuperAdmin && updatedUser instanceof SuperAdmin) {
-            SuperAdmin existingSuperAdmin = (SuperAdmin) existingUser;
-            superAdminRepository.save(existingSuperAdmin);
-        } else if (existingUser instanceof FacilityAdmin && updatedUser instanceof FacilityAdmin) {
-            FacilityAdmin existingFacilityAdmin = (FacilityAdmin) existingUser;
-            FacilityAdmin updatedFacilityAdmin = (FacilityAdmin) updatedUser;
-
-            if (updatedFacilityAdmin.getFacility() != null) {
-                existingFacilityAdmin.setFacility(updatedFacilityAdmin.getFacility());
-            }
-            facilityAdminRepository.save(existingFacilityAdmin);
-        } else if (existingUser instanceof Hosteller && updatedUser instanceof Hosteller) {
-            Hosteller existingHosteller = (Hosteller) existingUser;
-            Hosteller updatedHosteller = (Hosteller) updatedUser;
-            if (updatedHosteller.getRoom() != null) {
-                existingHosteller.setRoom(updatedHosteller.getRoom());
-            }
-            if (updatedHosteller.getSalary() != null) {
-                existingHosteller.setSalary(updatedHosteller.getSalary());
-            }
-            if (updatedHosteller.getIsSick() != null) {
-                existingHosteller.setIsSick(updatedHosteller.getIsSick());
-            }
-            hostellerRepository.save(existingHosteller);
-        } else if (existingUser instanceof SecurityPersonal && updatedUser instanceof SecurityPersonal) {
-            SecurityPersonal existingSecurityPersonal = (SecurityPersonal) existingUser;
-            securityPersonalRepository.save(existingSecurityPersonal);
-        } else {
-            throw new IllegalArgumentException("Unknown or mismatched user type for update.");
+        switch (userType.toLowerCase()) {
+            case "warden":
+                if (existingUser instanceof Warden && updatedUser instanceof Warden) {
+                    Warden existingWarden = (Warden) existingUser;
+                    Warden updatedWarden = (Warden) updatedUser;
+                    if (updatedWarden.getInChargeName() != null) {
+                        existingWarden.setInChargeName(updatedWarden.getInChargeName());
+                    }
+                    if (updatedWarden.getInChargeMobile() != null) {
+                        existingWarden.setInChargeMobile(updatedWarden.getInChargeMobile());
+                    }
+                    wardenRepository.save(existingWarden);
+                }
+                break;
+            case "facilityadmin":
+                if (existingUser instanceof FacilityAdmin && updatedUser instanceof FacilityAdmin) {
+                    FacilityAdmin existingFacilityAdmin = (FacilityAdmin) existingUser;
+                    FacilityAdmin updatedFacilityAdmin = (FacilityAdmin) updatedUser;
+                    if (updatedFacilityAdmin.getFacility() != null) {
+                        existingFacilityAdmin.setFacility(updatedFacilityAdmin.getFacility());
+                    }
+                    facilityAdminRepository.save(existingFacilityAdmin);
+                }
+                break;
+            case "hosteller":
+                if (existingUser instanceof Hosteller && updatedUser instanceof Hosteller) {
+                    Hosteller existingHosteller = (Hosteller) existingUser;
+                    Hosteller updatedHosteller = (Hosteller) updatedUser;
+                    if (updatedHosteller.getRoom() != null) {
+                        existingHosteller.setRoom(updatedHosteller.getRoom());
+                    }
+                    if (updatedHosteller.getSalary() != null) {
+                        existingHosteller.setSalary(updatedHosteller.getSalary());
+                    }
+                    if (updatedHosteller.getIsSick() != null) {
+                        existingHosteller.setIsSick(updatedHosteller.getIsSick());
+                    }
+                    hostellerRepository.save(existingHosteller);
+                }
+                break;
+            case "securitypersonal":
+                if (existingUser instanceof SecurityPersonal && updatedUser instanceof SecurityPersonal) {
+                    SecurityPersonal existingSecurityPersonal = (SecurityPersonal) existingUser;
+                    securityPersonalRepository.save(existingSecurityPersonal);
+                }
+                break;
+            case "superadmin":
+                if (existingUser instanceof SuperAdmin && updatedUser instanceof SuperAdmin) {
+                    SuperAdmin existingSuperAdmin = (SuperAdmin) existingUser;
+                    superAdminRepository.save(existingSuperAdmin);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown user type: " + userType);
         }
 
         return existingUser.getClass().getSimpleName() + " updated successfully!";
