@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dilmah.hostel.model.SecurityPersonal;
+import com.dilmah.hostel.model.SuperAdmin;
 import com.dilmah.hostel.model.Warden;
 import com.dilmah.hostel.request.UserRegistrationRequest;
 import com.dilmah.hostel.service.UserDetailsService;
@@ -53,4 +54,40 @@ public class AdminCreationController {
             return "Registration failed: " + e.getMessage();
         }
     }
+	
+    @PostMapping("/createsuperadmin")
+    public String createSuperAdmin(@RequestBody UserRegistrationRequest request) {
+        try {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String hashedPassword = passwordEncoder.encode(request.pass);
+            SuperAdmin superAdmin = new SuperAdmin();
+            superAdmin.setUserID(request.userID);
+            superAdmin.setFullName(request.fullName);
+            superAdmin.setPassword(hashedPassword);
+            superAdmin.setContactDetails(request.contactDetails);
+            userService.registerUser(superAdmin);
+            return "Super admin registered successfully!";
+        } catch (Exception e) {
+            return "Registration failed: " + e.getMessage();
+        }
+    }
+
+//    @PostMapping("/createhosteller")
+//    public String createHosteller(@RequestBody UserRegistrationRequest request) {
+//        try {
+//            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//            String hashedPassword = passwordEncoder.encode(request.pass);
+//            Hosteller hosteller = new Hosteller();
+//            hosteller.setUserID(request.userID);
+//            hosteller.setFullName(request.fullName);
+//            hosteller.setPassword(hashedPassword);
+//            hosteller.setContactDetails(request.contactDetails);
+//            hosteller.setSalary(null);
+//            hosteller.setRoom(null);
+//            userService.registerUser(hosteller);
+//            return "Hosteller registered successfully!";
+//        } catch (Exception e) {
+//            return "Registration failed: " + e.getMessage();
+//        }
+//    }
 }

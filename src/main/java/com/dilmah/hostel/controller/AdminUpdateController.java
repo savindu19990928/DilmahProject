@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -143,11 +141,10 @@ public class AdminUpdateController {
 	    }
 	}
 	
-	@PostMapping("/updatesecuritypersonal")
+	@PostMapping("/updatesecurity")
 	public String updateSecurityPersonal(@RequestBody Map<String, String> requestBody) {
 	    try {
 	        String username = requestBody.get("userID");
-	        String password = requestBody.get("password");
 	        String fullName = requestBody.get("fullName");
 	        String contactDetails = requestBody.get("contactDetails");
 	        
@@ -162,12 +159,6 @@ public class AdminUpdateController {
 	        }
 	        if (contactDetails != null) {
 	            existingSecurityAdmin.setContactDetails(contactDetails);
-	        }
-	        
-	        if (password != null && !password.isEmpty()) {
-	            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	            String hashedPassword = passwordEncoder.encode(password);
-	            existingSecurityAdmin.setPassword(hashedPassword);
 	        }
 	        
 	        userService.updateUser(username, existingSecurityAdmin, "securitypersonal");

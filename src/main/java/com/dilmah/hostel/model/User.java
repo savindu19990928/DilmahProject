@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +20,7 @@ public abstract class User {
     @Column(length = 25, nullable = false)
     private String fullName;
     
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
     
