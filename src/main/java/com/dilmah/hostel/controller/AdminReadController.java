@@ -1,5 +1,8 @@
 package com.dilmah.hostel.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,6 +76,20 @@ public class AdminReadController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error fetching Super Admin: " + e.getMessage());
+        }
+    }
+    
+    @PostMapping("/all/hostellers")
+    public ResponseEntity<?> getAllHostellers() {
+        try {
+            List<Map<String, Object>> hostellers = userService.findAllHostellers();
+            if (hostellers != null && !hostellers.isEmpty()) {
+                return ResponseEntity.ok(hostellers);
+            } else {
+                return ResponseEntity.status(404).body("No hostellers found!");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching hostellers: " + e.getMessage());
         }
     }
 }

@@ -9,7 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
@@ -245,5 +248,17 @@ public class UserDetailsService implements org.springframework.security.core.use
         }
 
         return existingUser.getClass().getSimpleName() + " updated successfully!";
+    }
+    
+    public List<Map<String, Object>> findAllHostellers() {
+        List<Hosteller> hostellers = hostellerRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Hosteller hosteller : hostellers) {
+            Map<String, Object> hostellerData = new HashMap<>();
+            hostellerData.put("data", hosteller);
+            hostellerData.put("roomNumber", hosteller.getRoom() != null ? hosteller.getRoom().getRoomNumber() : null);
+            result.add(hostellerData);
+        }
+        return result;
     }
 }

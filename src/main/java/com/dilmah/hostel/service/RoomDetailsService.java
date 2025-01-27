@@ -44,14 +44,13 @@ public class RoomDetailsService {
         return roomRepository.findAll();
     }
     
-    public Room createRoom(Long roomNumber, String status, Integer availability) {
+    public Room createRoom(Long roomNumber, Integer availability) {
         if (roomRepository.existsById(roomNumber)) {
             throw new IllegalArgumentException("Room with room number " + roomNumber + " already exists.");
         }
         
         Room room = new Room();
         room.setRoomNumber(roomNumber);
-        room.setStatus(status);
         room.setAvailability(availability);
         
         return roomRepository.save(room);

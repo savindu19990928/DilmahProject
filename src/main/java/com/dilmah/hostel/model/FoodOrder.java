@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class FoodOrder {
 
@@ -21,9 +23,11 @@ public class FoodOrder {
     @JoinColumn(name = "userID", nullable = false)
     private User user;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "foodOrder", cascade = CascadeType.DETACH)
     private List<FoodMenu> foodMenus;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "foodOrder", cascade = CascadeType.DETACH)
     private List<Fee> fees;
 

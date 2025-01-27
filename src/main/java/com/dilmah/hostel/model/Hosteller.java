@@ -3,27 +3,36 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Hosteller extends User {
+	@JsonIgnore
     @ManyToOne
     @JoinColumn(name = "roomNumber")
     private Room room;
     
+	@JsonIgnore
     @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<Guardian> gurdians;
     
+	@JsonIgnore
     @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<Complaint> complaints;
     
+	@JsonIgnore
     @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<Fee> fees;
     
+	@JsonIgnore
     @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<Offense> Offense;
     
+	@JsonIgnore
     @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<Fine> fines;
     
+	@JsonIgnore
     @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<HostellerFacilityProfile> facilityProfile;
     

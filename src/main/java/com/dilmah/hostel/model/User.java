@@ -31,6 +31,7 @@ public abstract class User {
     @Column(nullable = false, updatable = false)
     private LocalDateTime assigned;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "creator", cascade = CascadeType.DETACH)
     private List<Fine> fineCreations;
 

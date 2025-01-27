@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Facility {
 
@@ -23,15 +25,19 @@ public class Facility {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "facility", cascade = CascadeType.DETACH)
     private List<FacilityIncomeExpense> finances;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "facility", cascade = CascadeType.DETACH)
     private List<FacilityItem> items;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "facility", cascade = CascadeType.DETACH)
     private List<HostellerFacilityProfile> facilityProfile;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "facility", cascade = CascadeType.DETACH)
     private List<Subscription> subscriptions;
 

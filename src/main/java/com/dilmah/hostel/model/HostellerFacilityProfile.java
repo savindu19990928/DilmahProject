@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class HostellerFacilityProfile {
 
@@ -21,6 +23,7 @@ public class HostellerFacilityProfile {
     @JoinColumn(name = "facilityID", nullable = false)
     private Facility facility;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "hostellerFacilityProfile", cascade = CascadeType.DETACH)
     private List<BorrowedItem> borrowedItems;
 

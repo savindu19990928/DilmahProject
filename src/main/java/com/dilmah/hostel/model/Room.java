@@ -14,7 +14,7 @@ public class Room {
     private Long roomNumber;
 
     @Column(length = 15, nullable = false)
-    private String status;
+    private String status = "Available";
 
     private Integer availability;
 

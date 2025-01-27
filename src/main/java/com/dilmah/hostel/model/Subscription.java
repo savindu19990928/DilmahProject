@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Subscription {
 
@@ -28,9 +30,11 @@ public class Subscription {
     @Column(nullable = false)
     private BigDecimal fee;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.DETACH)
     private List<Service> services;
     
+    @JsonIgnore
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.DETACH)
     private List<Fee> fees;
     
