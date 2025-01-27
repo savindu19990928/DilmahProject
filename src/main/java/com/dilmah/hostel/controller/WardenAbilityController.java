@@ -1,5 +1,6 @@
 package com.dilmah.hostel.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +54,34 @@ public class WardenAbilityController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Hosteller registered successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed: " + e.getMessage());
+        }
+    }
+    
+    @PostMapping("/hosteller/{userID}")
+    public ResponseEntity<?> getHosteller(@PathVariable String userID) {
+        try {
+            Hosteller hosteller = userService.findHostellerByUsername(userID);
+            if (hosteller != null) {
+                return ResponseEntity.ok(hosteller);
+            } else {
+                return ResponseEntity.status(404).body("Hosteller not found!");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching Hosteller: " + e.getMessage());
+        }
+    }
+    
+    @PostMapping("/all/hostellers")
+    public ResponseEntity<?> getAllHostellers() {
+        try {
+            List<Map<String, Object>> hostellers = userService.findAllHostellers();
+            if (hostellers != null && !hostellers.isEmpty()) {
+                return ResponseEntity.ok(hostellers);
+            } else {
+                return ResponseEntity.status(404).body("No hostellers found!");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching hostellers: " + e.getMessage());
         }
     }
     
