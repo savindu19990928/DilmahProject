@@ -118,6 +118,11 @@ public class AdminUpdateController {
 	            if (room == null) {
 	                return "Room not found with roomID: " + roomId;
 	            }
+	            Room oldRoom = existingHosteller.getRoom();
+	            oldRoom.setAvailability(oldRoom.getAvailability() + 1);
+	            roomService.saveRoom(oldRoom);
+	            room.setAvailability(room.getAvailability() - 1);
+	            roomService.saveRoom(room);
 	            existingHosteller.setRoom(room);
 	        }
 

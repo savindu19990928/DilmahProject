@@ -1,5 +1,6 @@
 package com.dilmah.hostel.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,63 @@ public class WardenAbilityController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed: " + e.getMessage());
         }
     }
+    
+	@PostMapping("/updatehosteller")
+	public String updateHosteller(@RequestBody Map<String, String> requestBody) {
+	    try {
+	        String username = requestBody.get("userID");
+	        String fullName = requestBody.get("fullName");
+	        String contactDetails = requestBody.get("contactDetails");
+	        String roomId = requestBody.get("room");
+	        String salaryStr = requestBody.get("salary");
+	        String isSickStr = requestBody.get("isSick");
+
+	        Hosteller existingHosteller = userService.findHostellerByUsername(username);
+
+	        if (existingHosteller == null) {
+	            return "Hosteller not found with userID: " + username;
+	        }
+
+	        if (fullName != null) {
+	            existingHosteller.setFullName(fullName);
+	        }
+	        if (contactDetails != null) {
+	            existingHosteller.setContactDetails(contactDetails);
+	        }
+	        
+	        if (roomId != null) {
+	        	Long roomNumber = Long.parseLong(roomId);
+	            Room room = roomService.findRoomByRoomNumber(roomNumber);
+	            if (room == null) {
+	                return "Room not found with roomID: " + roomId;
+	            }
+	            Room oldRoom = existingHosteller.getRoom();
+	            oldRoom.setAvailability(oldRoom.getAvailability() + 1);
+	            roomService.saveRoom(oldRoom);
+	            room.setAvailability(room.getAvailability() - 1);
+	            roomService.saveRoom(room);
+	            existingHosteller.setRoom(room);
+	        }
+
+	        if (salaryStr != null) {
+	            try {
+	                BigDecimal salary = new BigDecimal(salaryStr);
+	                existingHosteller.setSalary(salary);
+	            } catch (NumberFormatException e) {
+	                return "Invalid salary value provided.";
+	            }
+	        }
+
+	        if (isSickStr != null) {
+	            existingHosteller.setIsSick(Boolean.parseBoolean(isSickStr));
+	        }
+
+	        userService.updateUser(username, existingHosteller, "hosteller");
+	        return "Hosteller updated successfully!";
+	    } catch (Exception e) {
+	        return "Update failed: " + e.getMessage();
+	    }
+	}
     
     @PostMapping("/hosteller/{userID}")
     public ResponseEntity<?> getHosteller(@PathVariable String userID) {
