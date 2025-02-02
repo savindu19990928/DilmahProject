@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final ConcurrentMap<String, Bucket> buckets = new ConcurrentHashMap<>();
@@ -46,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/register").permitAll()
                         .requestMatchers("/warden/**").hasRole("WARDEN")
                         .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
+                        .requestMatchers("/instruction/**").hasRole("SUPERADMIN")
                         .requestMatchers("/facilityadmin/**").hasRole("FACILITYADMIN")
                         .requestMatchers("/securitypersonal/**").hasRole("SECURITYPERSONAL")
                         .requestMatchers("/hosteller/**").hasRole("HOSTELLER")
