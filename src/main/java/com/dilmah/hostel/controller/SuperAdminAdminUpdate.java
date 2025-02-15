@@ -19,7 +19,7 @@ import com.dilmah.hostel.service.UserDetailsService;
 
 @RestController
 @RequestMapping("/superadmin")
-public class AdminUpdateController {
+public class SuperAdminAdminUpdate {
 	
     @Autowired
     private UserDetailsService userService;

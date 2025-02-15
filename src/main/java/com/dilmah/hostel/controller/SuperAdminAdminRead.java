@@ -18,7 +18,7 @@ import com.dilmah.hostel.service.UserDetailsService;
 
 @RestController
 @RequestMapping("/superadmin")
-public class AdminReadController {
+public class SuperAdminAdminRead {
 	
 	@Autowired
     private UserDetailsService userService;

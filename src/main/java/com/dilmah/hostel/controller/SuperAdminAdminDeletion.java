@@ -11,7 +11,7 @@ import com.dilmah.hostel.service.UserDetailsService;
 
 @RestController
 @RequestMapping("/superadmin")
-public class AdminDeletionController {
+public class SuperAdminAdminDeletion {
 	
 	@Autowired
     private UserDetailsService userService;

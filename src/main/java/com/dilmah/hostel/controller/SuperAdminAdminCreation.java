@@ -23,7 +23,7 @@ import com.dilmah.hostel.service.UserDetailsService;
 
 @RestController
 @RequestMapping("/superadmin")
-public class AdminCreationController {
+public class SuperAdminAdminCreation {
 
     @Autowired
     private UserDetailsService userService;
