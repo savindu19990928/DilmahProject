@@ -17,6 +17,9 @@ public class Room {
     private String status = "Available";
 
     private Integer availability;
+    
+    @Column(nullable = false)
+    private Integer capacity;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.DETACH)
     private List<Hosteller> hostellers;
@@ -59,6 +62,14 @@ public class Room {
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
+	}
+
+	public Integer getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(Integer capacity) {
+		this.capacity = capacity;
 	}
 }
 
