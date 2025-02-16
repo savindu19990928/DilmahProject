@@ -1,6 +1,7 @@
 package com.dilmah.hostel.controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dilmah.hostel.model.Hosteller;
 import com.dilmah.hostel.model.Room;
 import com.dilmah.hostel.request.UserRegistrationRequest;
+import com.dilmah.hostel.service.FoodOrderService;
 import com.dilmah.hostel.service.RoomDetailsService;
 import com.dilmah.hostel.service.UserDetailsService;
 
@@ -30,6 +32,9 @@ public class WardenAbilityController {
 	
     @Autowired
     private RoomDetailsService roomService;
+   
+    @Autowired
+    private FoodOrderService foodService;
     
     @PostMapping("/createhosteller")
     public ResponseEntity<String> createHosteller(@RequestBody UserRegistrationRequest request) {
@@ -129,8 +134,9 @@ public class WardenAbilityController {
         }
     }
     
-    @PostMapping("/all/hostellers")
+    @PostMapping("/all/hostellers") 
     public ResponseEntity<?> getAllHostellers() {
+   
         try {
             List<Map<String, Object>> hostellers = userService.findAllHostellers();
             if (hostellers != null && !hostellers.isEmpty()) {
@@ -153,5 +159,22 @@ public class WardenAbilityController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Room creation failed: " + e.getMessage());
         }
+        
     }
+   
+    @PostMapping("/foodreport")
+    public ResponseEntity<?> getFoodReport() {
+		
+    	try {
+        	return ResponseEntity.ok(foodService.getFoodOrdersByDate(LocalDateTime.now()));
+    		
+        } catch (Exception e) {
+        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("No food order found: " + e.getMessage());
+         
+        }
+    	
+    }
+    
+    
+    
 }
