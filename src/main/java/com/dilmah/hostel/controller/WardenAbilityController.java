@@ -148,19 +148,6 @@ public class WardenAbilityController {
             return ResponseEntity.status(500).body("Error fetching hostellers: " + e.getMessage());
         }
     }
-    
-    @PostMapping("/createroom")
-    public ResponseEntity<String> createRoom(@RequestBody Map<String, String> request) {
-    	long roomNumber = Long.parseLong(request.get("roomNumber"));
-    	int availability = Integer.parseInt(request.get("availability"));
-        try {
-        	roomService.createRoom(roomNumber, availability);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Room created successfully!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Room creation failed: " + e.getMessage());
-        }
-        
-    }
    
     @PostMapping("/foodreport")
     public ResponseEntity<?> getFoodReport() {

@@ -5,7 +5,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.dilmah.hostel.model.Complaint;
 
-@RepositoryRestResource(path = "complaint")
+@RepositoryRestResource(exported = false)
 public interface ComplaintRepository extends JpaRepository<Complaint, Integer> {
 
 }
