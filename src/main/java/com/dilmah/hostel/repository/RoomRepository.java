@@ -7,6 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.dilmah.hostel.model.Room;
 
 @RepositoryRestResource(path = "room")
-@PreAuthorize("hasAnyRole('SUPERADMIN','WARDEN')")
+@PreAuthorize("hasRole('WARDEN')")
 public interface RoomRepository extends JpaRepository<Room, Long> {
 }

@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.dilmah.hostel.model.FoodMenu;
 
 @RepositoryRestResource(path = "foodmenu")
-@PreAuthorize("hasAnyRole('SUPERADMIN','WARDEN')")
+@PreAuthorize("hasRole('WARDEN')")
 public interface FoodMenuRepository extends JpaRepository<FoodMenu, Long> {
 
 }
