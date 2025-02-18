@@ -261,4 +261,14 @@ public class UserDetailsService implements org.springframework.security.core.use
         }
         return result;
     }
+    
+    // Get Facility Admin by Facility
+    public FacilityAdmin getFacilityAdminByFacility(Facility facility) {
+        return (FacilityAdmin) facilityAdminRepository.findByFacility(facility).orElse(null);
+    }
+
+    // Update Facility Admin
+    public FacilityAdmin updateFacilityAdmin(FacilityAdmin updatedFacilityAdmin) {
+        return facilityAdminRepository.save(updatedFacilityAdmin);
+    }
 }

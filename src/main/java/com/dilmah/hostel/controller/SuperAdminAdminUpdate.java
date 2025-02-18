@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,7 @@ public class SuperAdminAdminUpdate {
     @Autowired
     private RoomDetailsService roomService;
 	
-    @PostMapping("/updatesuperadmin")
+    @PutMapping("/updatesuperadmin")
     public String updateSuperAdmin(@RequestBody Map<String, String> requestBody) {
         try {
             String username = requestBody.get("userID");
@@ -54,7 +55,7 @@ public class SuperAdminAdminUpdate {
         }
     }
     
-	@PostMapping("/updatewarden")
+    @PutMapping("/updatewarden")
 	public String updateWarden(@RequestBody Map<String, String> requestBody) {
 	    try {
             String username = requestBody.get("userID");
@@ -89,7 +90,7 @@ public class SuperAdminAdminUpdate {
 	    }
 	}
 	
-	@PostMapping("/updatehosteller")
+    @PutMapping("/updatehosteller")
 	public String updateHosteller(@RequestBody Map<String, String> requestBody) {
 	    try {
 	        String username = requestBody.get("userID");
@@ -146,7 +147,7 @@ public class SuperAdminAdminUpdate {
 	    }
 	}
 	
-	@PostMapping("/updatesecurity")
+    @PutMapping("/updatesecurity")
 	public String updateSecurityPersonal(@RequestBody Map<String, String> requestBody) {
 	    try {
 	        String username = requestBody.get("userID");

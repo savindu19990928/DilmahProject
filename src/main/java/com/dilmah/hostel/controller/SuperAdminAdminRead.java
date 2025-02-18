@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +23,7 @@ public class SuperAdminAdminRead {
 	@Autowired
     private UserDetailsService userService;
 	
-    @PostMapping("/warden/{userID}")
+    @GetMapping("/warden/{userID}")
     public ResponseEntity<?> getWarden(@PathVariable String userID) {
         try {
             Warden warden = userService.findWardenByUsername(userID);
@@ -37,7 +37,7 @@ public class SuperAdminAdminRead {
         }
     }
 
-    @PostMapping("/security/{userID}")
+    @GetMapping("/security/{userID}")
     public ResponseEntity<?> getSecurity(@PathVariable String userID) {
         try {
             SecurityPersonal security = userService.findSecurityPersonalByUsername(userID);
@@ -51,7 +51,7 @@ public class SuperAdminAdminRead {
         }
     }
     
-    @PostMapping("/hosteller/{userID}")
+    @GetMapping("/hosteller/{userID}")
     public ResponseEntity<?> getHosteller(@PathVariable String userID) {
         try {
             Hosteller hosteller = userService.findHostellerByUsername(userID);
@@ -65,7 +65,7 @@ public class SuperAdminAdminRead {
         }
     }
     
-    @PostMapping("/superadmin/{userID}")
+    @GetMapping("/superadmin/{userID}")
     public ResponseEntity<?> getSuperAdmin(@PathVariable String userID) {
         try {
             SuperAdmin superAdmin = userService.findSuperAdminByUsername(userID);
@@ -79,7 +79,7 @@ public class SuperAdminAdminRead {
         }
     }
     
-    @PostMapping("/all/hostellers")
+    @GetMapping("/all/hostellers")
     public ResponseEntity<?> getAllHostellers() {
         try {
             List<Map<String, Object>> hostellers = userService.findAllHostellers();

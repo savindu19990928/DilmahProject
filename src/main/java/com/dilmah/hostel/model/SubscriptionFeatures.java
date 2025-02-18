@@ -7,7 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import jakarta.persistence.*;
 
 @Entity
-public class Service {
+public class SubscriptionFeatures {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

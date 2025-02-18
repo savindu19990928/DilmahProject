@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dilmah.hostel.model.Hosteller;
 import com.dilmah.hostel.model.Room;
+import com.dilmah.hostel.model.Warden;
 import com.dilmah.hostel.request.UserRegistrationRequest;
 import com.dilmah.hostel.service.FoodOrderService;
 import com.dilmah.hostel.service.RoomDetailsService;
@@ -35,6 +36,41 @@ public class WardenAbilityController {
    
     @Autowired
     private FoodOrderService foodService;
+    
+	@PostMapping("/updatewarden")
+	public String updateWarden(@RequestBody Map<String, String> requestBody) {
+	    try {
+            String username = requestBody.get("userID");
+            String fullName = requestBody.get("fullName");
+            String contactDetails = requestBody.get("contactDetails");
+            String inChargeName = requestBody.get("inChargeName");
+            String inChargeMobile = requestBody.get("inChargeMobile");
+            
+	        Warden existingWarden = userService.findWardenByUsername(username);
+	        
+	        if (existingWarden == null) {
+	            return "Warden not found with userID: " + username;
+	        }
+	        
+	        if (fullName != null) {
+	            existingWarden.setFullName(fullName);
+	        }
+	        if (contactDetails != null) {
+	            existingWarden.setContactDetails(contactDetails);
+	        }
+	        if (inChargeName != null) {
+	            existingWarden.setInChargeName(inChargeName);
+	        }
+	        if (inChargeMobile != null) {
+	            existingWarden.setInChargeMobile(inChargeMobile);
+	        }
+
+	        userService.updateUser(username,existingWarden,"warden");
+	        return "Warden updated successfully!";
+	    } catch (Exception e) {
+	        return "Update failed: " + e.getMessage();
+	    }
+	}
     
     @PostMapping("/createhosteller")
     public ResponseEntity<String> createHosteller(@RequestBody UserRegistrationRequest request) {

@@ -17,7 +17,7 @@ public class SuperAdminAdminDeletion {
     private UserDetailsService userService;
     
 	@PostMapping("/deleteadmin")
-    public String deleteWarden(@RequestBody Map<String, String> requestBody) {
+    public String deleteAdmin(@RequestBody Map<String, String> requestBody) {
         String userID = requestBody.get("userID");
         String userType = requestBody.get("userType");
 		try {

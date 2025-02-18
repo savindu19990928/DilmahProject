@@ -32,7 +32,7 @@ public class Subscription {
 
     @JsonIgnore
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.DETACH)
-    private List<Service> services;
+    private List<SubscriptionFeatures> subscriptionFeatures;
     
     @JsonIgnore
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.DETACH)
@@ -74,12 +74,12 @@ public class Subscription {
         this.description = description;
     }
 
-    public List<Service> getServices() {
-        return services;
+    public List<SubscriptionFeatures> getServices() {
+        return subscriptionFeatures;
     }
 
-    public void setServices(List<Service> services) {
-        this.services = services;
+    public void setServices(List<SubscriptionFeatures> subscriptionFeatures) {
+        this.subscriptionFeatures = subscriptionFeatures;
     }
 
 	public BigDecimal getFee() {
