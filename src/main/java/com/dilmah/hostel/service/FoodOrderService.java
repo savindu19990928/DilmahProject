@@ -38,7 +38,6 @@ public class FoodOrderService {
             foodOrder.setOrderType(updatedFoodOrder.getOrderType());
             foodOrder.setOrderedDate(updatedFoodOrder.getOrderedDate());
             foodOrder.setUser(updatedFoodOrder.getUser());
-            foodOrder.setFoodMenus(updatedFoodOrder.getFoodMenus());
             foodOrder.setFees(updatedFoodOrder.getFees());
             return foodOrderRepository.save(foodOrder);
         }).orElse(null);

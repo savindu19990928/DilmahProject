@@ -25,24 +25,12 @@ public class FoodOrder {
     
     @JsonIgnore
     @OneToMany(mappedBy = "foodOrder", cascade = CascadeType.DETACH)
-    private List<FoodMenu> foodMenus;
-    
-    @JsonIgnore
-    @OneToMany(mappedBy = "foodOrder", cascade = CascadeType.DETACH)
     private List<Fee> fees;
 
     public User getUser() {
 		return user;
 	}
-
-	public List<FoodMenu> getFoodMenus() {
-		return foodMenus;
-	}
-
-	public void setFoodMenus(List<FoodMenu> foodMenus) {
-		this.foodMenus = foodMenus;
-	}
-
+    
 	public void setUser(User user) {
 		this.user = user;
 	}
