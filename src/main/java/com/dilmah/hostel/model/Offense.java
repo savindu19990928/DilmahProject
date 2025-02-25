@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +15,7 @@ public class Offense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int offenseID;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userID", nullable = false)
     private Hosteller hosteller;

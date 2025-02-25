@@ -1,7 +1,5 @@
 package com.dilmah.hostel.controller;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -106,18 +104,6 @@ public class SuperAdminAdminCreation {
             return ResponseEntity.status(HttpStatus.CREATED).body("Hosteller registered successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed: " + e.getMessage());
-        }
-    }
-    
-    @PostMapping("/createroom")
-    public ResponseEntity<String> createRoom(@RequestBody Map<String, String> request) {
-    	long roomNumber = Long.parseLong(request.get("roomNumber"));
-    	int availability = Integer.parseInt(request.get("availability"));
-        try {
-            roomService.createRoom(roomNumber, availability);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Room created successfully!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Room creation failed: " + e.getMessage());
         }
     }
 }

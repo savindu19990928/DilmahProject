@@ -203,7 +203,7 @@ public class SuperAdminFacilityManagement {
     public ResponseEntity<?> getSubscriptionFeaturesBySubscriptionId(@PathVariable int subscriptionId) {
         try {
             // Fetch the subscription by its ID
-            Subscription subscription = subscriptionService.getSubscriptionById(subscriptionId)
+            subscriptionService.getSubscriptionById(subscriptionId)
                     .orElseThrow(() -> new RuntimeException("Subscription not found with id: " + subscriptionId));
             
             // Get all features associated with the specific subscription

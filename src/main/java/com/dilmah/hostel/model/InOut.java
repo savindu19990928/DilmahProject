@@ -23,15 +23,19 @@ public class InOut {
     @Column(nullable = false)
     private LocalDateTime outTime;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime returnedTime;
+    
+    @Column(nullable = false)
+    private LocalDateTime inTime;
 
     @Column(length = 10, nullable = false)
-    private String otpIn;
+    private String otp1;
     
     @Column(length = 10, nullable = false)
-    private String otpOut;
+    private String otp2;
     
+    @Column(nullable = true)
     private LocalDateTime approved;
 
     public long getInOutID() {
@@ -74,23 +78,35 @@ public class InOut {
         this.approved = approved;
     }
 
-	public String getOtpIn() {
-		return otpIn;
+	public String getOtp1() {
+		return otp1;
 	}
 
-	public void setOtpIn(String otpIn) {
-		this.otpIn = otpIn;
+	public void setOtp1(String otpIn) {
+		this.otp1 = otpIn;
 	}
 
-	public String getOtpOut() {
-		return otpOut;
+	public String getOtp2() {
+		return otp2;
 	}
 
-	public void setOtpOut(String otpOut) {
-		this.otpOut = otpOut;
+	public void setOtp2(String otpOut) {
+		this.otp2 = otpOut;
 	}
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
+	}
+
+	public LocalDateTime getInTime() {
+		return inTime;
+	}
+
+	public void setInTime(LocalDateTime inTime) {
+		this.inTime = inTime;
+	}
+
+	public LocalDateTime getApproved() {
+		return approved;
 	}
 }
