@@ -23,6 +23,9 @@ public class Fine {
 
     @Column(nullable = false)
     private BigDecimal amount;
+    
+    @Column(nullable = false)
+    private String reason;
 
     @Column(nullable = false)
     private boolean paid;
@@ -73,5 +76,13 @@ public class Fine {
 
 	public void setCreator(User creator) {
 		this.creator = creator;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 }

@@ -1,7 +1,7 @@
 package com.dilmah.hostel.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -20,7 +20,7 @@ public class FoodMenu {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDate menuDate;
+    private LocalDateTime menuDate;
 
     public Long getMenuItemID() {
         return menuItemID;
@@ -38,11 +38,11 @@ public class FoodMenu {
         this.name = name;
     }
 
-    public LocalDate getMenuDate() {
+    public LocalDateTime getMenuDate() {
         return menuDate;
     }
 
-    public void setMenuDate(LocalDate menuDate) {
+    public void setMenuDate(LocalDateTime menuDate) {
         this.menuDate = menuDate;
     }
 
