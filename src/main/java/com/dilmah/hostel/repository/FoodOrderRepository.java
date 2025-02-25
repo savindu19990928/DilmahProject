@@ -11,5 +11,5 @@ import com.dilmah.hostel.model.FoodOrder;
 @RepositoryRestResource(exported = false)
 public interface FoodOrderRepository extends JpaRepository<FoodOrder, Long> {
 	List<FoodOrder> findByOrderedDateBetween(LocalDateTime start, LocalDateTime end);
-
+	List<FoodOrder> findByUserUserID(String username);
 }

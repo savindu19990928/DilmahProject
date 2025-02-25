@@ -13,9 +13,9 @@ public class FoodOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long orderID;
 
-    @Column(length = 15, nullable = false)
+    @Column(length = 30, nullable = false)
     private String orderType;
-
+    
     @Column(nullable = false)
     private LocalDateTime orderedDate;
     

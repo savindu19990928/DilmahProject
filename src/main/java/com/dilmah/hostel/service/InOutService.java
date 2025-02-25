@@ -1,5 +1,6 @@
 package com.dilmah.hostel.service;
 
+import com.dilmah.hostel.model.Hosteller;
 import com.dilmah.hostel.model.InOut;
 import com.dilmah.hostel.repository.InOutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,9 @@ public class InOutService {
     // Delete by ID
     public void deleteById(long id) {
         inOutRepository.deleteById(id);
+    }
+    
+    public List<InOut> findByHosteller(Optional<Hosteller> hosteller) {
+        return inOutRepository.findByHosteller(hosteller);
     }
 }

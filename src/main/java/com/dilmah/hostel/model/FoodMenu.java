@@ -12,14 +12,14 @@ public class FoodMenu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long menuItemID;
 
-    @Column(length = 15, nullable = false)
-    private String name;
+    @Column(length = 225, nullable = false)
+    private String description;
     
     @Column(length = 15, nullable = false)
     private String orderType;
 
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime menuDate;
 
     public Long getMenuItemID() {
@@ -30,12 +30,12 @@ public class FoodMenu {
         this.menuItemID = menuItemID;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getMenuDate() {

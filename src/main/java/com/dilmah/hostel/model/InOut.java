@@ -26,13 +26,16 @@ public class InOut {
     @Column(nullable = true)
     private LocalDateTime returnedTime;
     
+    @Column(nullable = true)
+    private LocalDateTime leavedTime;
+    
     @Column(nullable = false)
     private LocalDateTime inTime;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 5, nullable = false)
     private String otp1;
     
-    @Column(length = 10, nullable = false)
+    @Column(length = 5, nullable = false)
     private String otp2;
     
     @Column(nullable = true)
@@ -108,5 +111,13 @@ public class InOut {
 
 	public LocalDateTime getApproved() {
 		return approved;
+	}
+
+	public LocalDateTime getLeavedTime() {
+		return leavedTime;
+	}
+
+	public void setLeavedTime(LocalDateTime leavedTime) {
+		this.leavedTime = leavedTime;
 	}
 }

@@ -12,6 +12,7 @@ import com.dilmah.hostel.util.JwtTokenUtil;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class HostellerInOutController {
 
 	private String generateOtp() {
 		SecureRandom random = new SecureRandom();
-		long otp = 1000000000L + random.nextLong(9000000000L);
+		int otp = 10000 + random.nextInt(90000); // Generate a number between 10000 and 99999
 		return String.valueOf(otp);
 	}
 
@@ -45,8 +46,19 @@ public class HostellerInOutController {
 			String hostellerId = jwtTokenUtil.extractUsername(token);
 
 			Optional<Hosteller> hosteller = Optional.ofNullable(hostellerService.findHostellerByUsername(hostellerId));
+
+			// Check if a record for this hosteller already exists
+			Optional<List<InOut>> existingInOut = Optional.ofNullable(inOutService.findByHosteller(hosteller));
+
+			if (existingInOut.isPresent() && !existingInOut.get().isEmpty()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body("A record already exists for this hosteller.");
+			}
+
 			String otp1 = generateOtp();
 			String otp2 = generateOtp();
+
+			// Check if generated OTPs already exist in the system
 			Optional<InOut> result1 = inOutService.findByOtpIn(otp1);
 			Optional<InOut> result2 = inOutService.findByOtpOut(otp2);
 
@@ -60,7 +72,8 @@ public class HostellerInOutController {
 
 				return ResponseEntity.ok(inOutService.saveOrUpdate(inOut));
 			} else {
-				return ResponseEntity.badRequest().body("Hosteller not found with ID: " + hostellerId);
+				return ResponseEntity.badRequest()
+						.body("Hosteller not found with ID: " + hostellerId + " or OTP conflicts.");
 			}
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("Error creating record: " + e.getMessage());

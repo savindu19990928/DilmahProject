@@ -1,5 +1,6 @@
 package com.dilmah.hostel.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,6 @@ public interface FoodMenuRepository extends JpaRepository<FoodMenu, Long> {
     void delete(FoodMenu entity);
     
     @RestResource(exported = true)
-    FoodMenu findTopByOrderByCreatedAtDesc();
+    FoodMenu findTopByMenuDateLessThanEqualOrderByMenuDateDesc(LocalDate menuDate);
 }
 

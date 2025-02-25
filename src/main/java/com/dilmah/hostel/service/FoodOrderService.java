@@ -28,6 +28,10 @@ public class FoodOrderService {
         LocalDateTime endOfDay = date.toLocalDate().atTime(23, 59, 59);
         return foodOrderRepository.findByOrderedDateBetween(startOfDay, endOfDay);
     }
+    
+    public List<FoodOrder> getFoodOrdersByUsername(String username) {
+    	return foodOrderRepository.findByUserUserID(username);
+    }
 
     public FoodOrder saveFoodOrder(FoodOrder foodOrder) {
         return foodOrderRepository.save(foodOrder);

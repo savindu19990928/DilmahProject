@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,10 +25,24 @@ public class SecurityInOutController {
 	private InOutService inOutService;
 
 	// Find by otpIn
-	@GetMapping("/otp/{otpIn}")
-	public ResponseEntity<?> findByOtpIn(@PathVariable String otpIn) {
-		Optional<InOut> result = inOutService.findByOtpIn(otpIn);
-		return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+	@PatchMapping("/otp/{otpIn}")
+	public ResponseEntity<?> findByOtpIn(@PathVariable String otpIn, @RequestBody LocalDateTime dateTime) {
+		try {
+			Optional<InOut> result = inOutService.findByOtpIn(otpIn);
+
+			if (result.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: No record found for otpIn: " + otpIn);
+			}
+
+			InOut inOut = result.get();
+			inOut.setLeavedTime(dateTime);
+
+			return ResponseEntity.ok(inOutService.saveOrUpdate(inOut));
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error updating returnedTime: " + e.getMessage());
+		}
 	}
 
 	@PutMapping("/otp/{otpOut}")
