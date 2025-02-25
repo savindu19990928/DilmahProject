@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 public class BorrowedItem {
 
@@ -17,8 +15,7 @@ public class BorrowedItem {
     @ManyToOne
     @JoinColumn(name = "facilityProfileID", nullable = false)
     private HostellerFacilityProfile hostellerFacilityProfile;
-
-    @JsonIgnore
+    
     @OneToOne
     @JoinColumn(name = "itemID", nullable = false)
     private FacilityItem facilityItem;

@@ -53,6 +53,8 @@ public class SecurityConfig {
                         .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
                         .requestMatchers("/facilityadmin/**").hasRole("FACILITYADMIN")
                         .requestMatchers("/security/**").hasRole("SECURITYPERSONAL")
+                        .requestMatchers(HttpMethod.PUT, "/complaint/**").hasRole("HOSTELLER")
+                        .requestMatchers(HttpMethod.PATCH, "/complaint/**").hasRole("HOSTELLER")
                         .requestMatchers(HttpMethod.PUT, "/foodmenu/**").denyAll()
                         .requestMatchers(HttpMethod.PATCH, "/foodmenu/**").denyAll()
                         .anyRequest().authenticated()
