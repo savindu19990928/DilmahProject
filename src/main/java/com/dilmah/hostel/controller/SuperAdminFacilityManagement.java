@@ -53,12 +53,13 @@ public class SuperAdminFacilityManagement {
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String hashedPassword = passwordEncoder.encode(request.pass);
             FacilityAdmin facilityAdmin = new FacilityAdmin();
+            facilityAdmin.setFacility(facility);
             facilityAdmin.setUserID(request.userID);
             facilityAdmin.setFullName(request.fullName);
             facilityAdmin.setPassword(hashedPassword);
             facilityAdmin.setContactDetails(request.contactDetails);
             userService.registerUser(facilityAdmin);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Security personnel registered successfully!");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Facility registered successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed: " + e.getMessage());
         }
