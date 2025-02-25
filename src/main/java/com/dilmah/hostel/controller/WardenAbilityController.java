@@ -53,6 +53,7 @@ public class WardenAbilityController {
 			String contactDetails = requestBody.get("contactDetails");
 			String inChargeName = requestBody.get("inChargeName");
 			String inChargeMobile = requestBody.get("inChargeMobile");
+			String isInCharge = requestBody.get("isInCharge");
 
 			Warden existingWarden = userService.findWardenByUsername(username);
 
@@ -71,6 +72,11 @@ public class WardenAbilityController {
 			}
 			if (inChargeMobile != null) {
 				existingWarden.setInChargeMobile(inChargeMobile);
+			}
+			
+			if (isInCharge != "Yes") {
+				existingWarden.setInChargeName(null);
+				existingWarden.setInChargeMobile(null);
 			}
 
 			userService.updateUser(username, existingWarden, "warden");
