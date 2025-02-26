@@ -15,6 +15,9 @@ public class Expense {
 
     @Column(length = 15, nullable = false)
     private String category;
+    
+    @Column(nullable = false)
+    private String description;
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -50,4 +53,12 @@ public class Expense {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

@@ -1,6 +1,8 @@
 package com.dilmah.hostel.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -9,8 +11,9 @@ public class FoodOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long orderID;
-
+    
     @Column(length = 30, nullable = false)
+    @Pattern(regexp = "^(breakfast|lunch|dinner)$", message = "Order type must be either 'Breakfast', 'Lunch', or 'Dinner'")
     private String orderType;
     
     @Column(nullable = false)

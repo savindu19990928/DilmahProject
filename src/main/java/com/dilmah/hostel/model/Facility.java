@@ -27,10 +27,6 @@ public class Facility {
     
     @JsonIgnore
     @OneToMany(mappedBy = "facility", cascade = CascadeType.DETACH)
-    private List<FacilityIncomeExpense> finances;
-    
-    @JsonIgnore
-    @OneToMany(mappedBy = "facility", cascade = CascadeType.DETACH)
     private List<FacilityItem> items;
     
     @JsonIgnore
@@ -77,14 +73,6 @@ public class Facility {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
-	public List<FacilityIncomeExpense> getFinances() {
-		return finances;
-	}
-
-	public void setFinances(List<FacilityIncomeExpense> finances) {
-		this.finances = finances;
-	}
 
 	public List<HostellerFacilityProfile> getFacilityProfile() {
 		return facilityProfile;
