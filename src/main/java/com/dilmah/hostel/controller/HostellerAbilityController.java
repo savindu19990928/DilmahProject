@@ -90,7 +90,6 @@ public class HostellerAbilityController {
     public ResponseEntity<FoodOrder> updateFoodOrder(@RequestHeader("Authorization") String token, @PathVariable long orderId, @RequestBody Map<String, Object> requestBody) {
         try {
             String hostellerId = jwtTokenUtil.extractUsername(token);
-            Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
             
             FoodOrder existingFoodOrder = foodOrderService.getFoodOrderById(orderId).orElse(null);
             if (existingFoodOrder == null) {
@@ -124,7 +123,6 @@ public class HostellerAbilityController {
     public ResponseEntity<String> deleteFoodOrder(@RequestHeader("Authorization") String token, @PathVariable long orderId) {
         try {
             String hostellerId = jwtTokenUtil.extractUsername(token);
-            Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
 
             // Ensure the food order exists before trying to delete it
             FoodOrder foodOrder = foodOrderService.getFoodOrderById(orderId).orElse(null);

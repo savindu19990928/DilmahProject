@@ -34,10 +34,6 @@ public class Subscription {
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.DETACH)
     private List<SubscriptionFeatures> subscriptionFeatures;
     
-    @JsonIgnore
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.DETACH)
-    private List<Fee> fees;
-    
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -88,14 +84,6 @@ public class Subscription {
 
 	public void setFee(BigDecimal fee) {
 		this.fee = fee;
-	}
-
-	public List<Fee> getFees() {
-		return fees;
-	}
-
-	public void setFees(List<Fee> fees) {
-		this.fees = fees;
 	}
 
 	public LocalDateTime getCreatedAt() {

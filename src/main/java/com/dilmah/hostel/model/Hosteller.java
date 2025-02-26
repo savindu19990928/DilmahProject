@@ -22,10 +22,6 @@ public class Hosteller extends User {
     
 	@JsonIgnore
     @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
-    private List<Fee> fees;
-    
-	@JsonIgnore
-    @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<Offense> Offense;
     
 	@JsonIgnore
@@ -38,9 +34,6 @@ public class Hosteller extends User {
     
     @Column(nullable = false)
     private BigDecimal salary;
-
-    @Column(nullable = false)
-    private Boolean isSick = false;
 
 	public Room getRoom() {
 		return room;
@@ -66,28 +59,12 @@ public class Hosteller extends User {
 		this.salary = salary;
 	}
 
-	public Boolean getIsSick() {
-		return isSick;
-	}
-
-	public void setIsSick(Boolean isSick) {
-		this.isSick = isSick;
-	}
-
 	public List<Complaint> getComplaints() {
 		return complaints;
 	}
 
 	public void setComplaints(List<Complaint> complaints) {
 		this.complaints = complaints;
-	}
-
-	public List<Fee> getFees() {
-		return fees;
-	}
-
-	public void setFees(List<Fee> fees) {
-		this.fees = fees;
 	}
 
 	public List<Fine> getFines() {

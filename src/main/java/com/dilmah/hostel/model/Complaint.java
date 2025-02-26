@@ -22,9 +22,6 @@ public class Complaint {
     @Column(length = 225, nullable = false)
     private String description;
 
-    @Column(length = 10, nullable = false)
-    private String status;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createAt;
@@ -59,14 +56,6 @@ public class Complaint {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public LocalDateTime getCreateAt() {

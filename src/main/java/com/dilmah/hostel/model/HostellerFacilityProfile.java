@@ -27,7 +27,7 @@ public class HostellerFacilityProfile {
     @OneToMany(mappedBy = "hostellerFacilityProfile", cascade = CascadeType.DETACH)
     private List<BorrowedItem> borrowedItems;
 
-    @Column(length = 15, nullable = false)
+    @Column(length = 15, nullable = true)
     private String status;
 
     @Column(length = 225, nullable = true)

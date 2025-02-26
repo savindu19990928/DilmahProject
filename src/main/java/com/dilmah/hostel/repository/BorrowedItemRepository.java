@@ -7,5 +7,5 @@ import java.util.List;
 
 @RepositoryRestResource(exported = false)
 public interface BorrowedItemRepository extends JpaRepository<BorrowedItem, Integer> {
-    List<BorrowedItem> findByHostellerFacilityProfile_Hosteller_UserID(String hostellerID);
+	List<BorrowedItem> findByHostellerFacilityProfile_Hosteller_UserIDAndFacility_Id(String userId, int facilityId);
 }

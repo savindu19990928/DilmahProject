@@ -73,7 +73,7 @@ public class FacilityItemService {
         borrowedItemRepository.deleteById(id);
     }
 
-    public List<BorrowedItem> getBorrowedItemsByHostellerUserId(String userId) {
-        return borrowedItemRepository.findByHostellerFacilityProfile_Hosteller_UserID(userId);
+    public List<BorrowedItem> getBorrowedItemsByHostellerUserId(String userId, int facilityId) {
+        return borrowedItemRepository.findByHostellerFacilityProfile_Hosteller_UserIDAndFacility_Id(userId, facilityId);
     }
 }

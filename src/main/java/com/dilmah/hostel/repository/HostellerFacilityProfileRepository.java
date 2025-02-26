@@ -13,4 +13,5 @@ public interface HostellerFacilityProfileRepository extends JpaRepository<Hostel
     List<HostellerFacilityProfile> findByFacility_FacilityID(int facilityId);
     List<HostellerFacilityProfile> findByHosteller_UserID(String hostellerId);
     Optional<HostellerFacilityProfile> findByFacility_FacilityIDAndHosteller_UserID(int facilityId, String hostellerId);
+    List<HostellerFacilityProfile> findByStatusIsNull();
 }

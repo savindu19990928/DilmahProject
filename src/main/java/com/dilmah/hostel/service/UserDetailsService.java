@@ -225,9 +225,6 @@ public class UserDetailsService implements org.springframework.security.core.use
                     if (updatedHosteller.getSalary() != null) {
                         existingHosteller.setSalary(updatedHosteller.getSalary());
                     }
-                    if (updatedHosteller.getIsSick() != null) {
-                        existingHosteller.setIsSick(updatedHosteller.getIsSick());
-                    }
                     hostellerRepository.save(existingHosteller);
                 }
                 break;

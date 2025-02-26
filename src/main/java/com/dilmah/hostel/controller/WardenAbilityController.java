@@ -123,7 +123,6 @@ public class WardenAbilityController {
 			String contactDetails = requestBody.get("contactDetails");
 			String roomId = requestBody.get("room");
 			String salaryStr = requestBody.get("salary");
-			String isSickStr = requestBody.get("isSick");
 
 			Hosteller existingHosteller = userService.findHostellerByUsername(username);
 
@@ -159,10 +158,6 @@ public class WardenAbilityController {
 				} catch (NumberFormatException e) {
 					return "Invalid salary value provided.";
 				}
-			}
-
-			if (isSickStr != null) {
-				existingHosteller.setIsSick(Boolean.parseBoolean(isSickStr));
 			}
 
 			userService.updateUser(username, existingHosteller, "hosteller");

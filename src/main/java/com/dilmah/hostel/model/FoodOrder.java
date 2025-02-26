@@ -2,9 +2,6 @@ package com.dilmah.hostel.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class FoodOrder {
@@ -22,10 +19,6 @@ public class FoodOrder {
     @ManyToOne
     @JoinColumn(name = "userID", nullable = false)
     private User user;
-    
-    @JsonIgnore
-    @OneToMany(mappedBy = "foodOrder", cascade = CascadeType.DETACH)
-    private List<Fee> fees;
 
     public User getUser() {
 		return user;
@@ -58,12 +51,4 @@ public class FoodOrder {
     public void setOrderedDate(LocalDateTime orderedDate) {
         this.orderedDate = orderedDate;
     }
-
-	public List<Fee> getFees() {
-		return fees;
-	}
-
-	public void setFees(List<Fee> fees) {
-		this.fees = fees;
-	}
 }

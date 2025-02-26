@@ -17,7 +17,6 @@ import com.dilmah.hostel.model.BorrowedItem;
 import com.dilmah.hostel.model.Facility;
 import com.dilmah.hostel.model.FacilityAdmin;
 import com.dilmah.hostel.model.FacilityItem;
-import com.dilmah.hostel.model.Hosteller;
 import com.dilmah.hostel.model.HostellerFacilityProfile;
 import com.dilmah.hostel.service.FacilityItemService;
 import com.dilmah.hostel.service.FacilityService;
@@ -47,7 +46,7 @@ public class FacilityAdminAbilityController {
 	private HostellerFacilityProfileService hostellerFacilityProfileService;
 
 	private boolean isFacilityAdminAuthorized(HttpServletRequest request, int facilityId) {
-		String token = request.getHeader("Authorization").substring(7); // Remove 'Bearer ' prefix
+		String token = request.getHeader("Authorization");
 		String facilityAdminId = jwtTokenUtil.extractUsername(token);
 		FacilityAdmin fa = userService.findFacilityAdminByUsername(facilityAdminId);
 		return fa.getFacility().getFacilityID() == facilityId;
@@ -55,7 +54,7 @@ public class FacilityAdminAbilityController {
 
 	@GetMapping("/my-facility")
 	public ResponseEntity<Facility> getFacilityByAdmin(HttpServletRequest request) {
-		String token = request.getHeader("Authorization").substring(7); // Remove 'Bearer ' prefix
+		String token = request.getHeader("Authorization");
 		String facilityAdminId = jwtTokenUtil.extractUsername(token);
 
 		FacilityAdmin fa = userService.findFacilityAdminByUsername(facilityAdminId);
@@ -113,7 +112,7 @@ public class FacilityAdminAbilityController {
 	// Approve Hosteller to Facility
 	@PostMapping("/{id}/approve-hosteller")
 	public ResponseEntity<String> approveHosteller(HttpServletRequest request, @PathVariable int id,
-			@RequestBody Hosteller hosteller) {
+			@RequestBody int profileID) {
 		if (!isFacilityAdminAuthorized(request, id)) {
 			return ResponseEntity.status(403)
 					.body("Unauthorized: You can only approve hostellers for your own facility.");
@@ -125,23 +124,12 @@ public class FacilityAdminAbilityController {
 			if (facilityOpt.isEmpty()) {
 				return ResponseEntity.status(404).body("Facility not found.");
 			}
-			Facility facility = facilityOpt.get();
-
-			Object hostellerService;
-			// Ensure hosteller exists
-			Optional<Hosteller> hostellerOpt = Optional
-					.ofNullable(userService.findHostellerByUsername(hosteller.getUserID()));
-			if (hostellerOpt.isEmpty()) {
-				return ResponseEntity.status(404).body("Hosteller not found.");
-			}
-			Hosteller existingHosteller = hostellerOpt.get();
 
 			// Create Hosteller Facility Profile
-			HostellerFacilityProfile profile = new HostellerFacilityProfile();
-			profile.setHosteller(existingHosteller);
-			profile.setFacility(facility);
+			HostellerFacilityProfile profile = (HostellerFacilityProfile) hostellerFacilityProfileService
+					.getProfilesByFacilityId(profileID);
 			profile.setStatus("APPROVED");
-			profile.setDescription("Hosteller approved to facility.");
+			profile.setDescription("Hosteller just approved to facility.");
 
 			hostellerFacilityProfileService.saveHostellerFacilityProfile(profile);
 
@@ -176,7 +164,7 @@ public class FacilityAdminAbilityController {
 		if (!isFacilityAdminAuthorized(request, id)) {
 			return ResponseEntity.status(403).build();
 		}
-		List<BorrowedItem> borrowedItems = facilityItemService.getBorrowedItemsByHostellerUserId(userId);
+		List<BorrowedItem> borrowedItems = facilityItemService.getBorrowedItemsByHostellerUserId(userId, id);
 		if (borrowedItems.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -191,6 +179,18 @@ public class FacilityAdminAbilityController {
 			return ResponseEntity.status(403).build();
 		}
 		try {
+			// Find the facility item being borrowed
+			Optional<FacilityItem> bitem = facilityItemService.getFacilityItemById(borrowedItem.getBorrowedID());
+			FacilityItem item = bitem.get();
+			if (item == null || item.getQuantity() <= 0) {
+				return ResponseEntity.status(400).body(null); // Not enough stock
+			}
+
+			// Reduce the stock by 1
+			item.setQuantity(item.getQuantity() - 1);
+			facilityItemService.updateFacilityItem(item.getItemID(), item);
+
+			// Save the borrowed item record
 			BorrowedItem savedItem = facilityItemService.saveBorrowedItem(borrowedItem);
 			return ResponseEntity.ok(savedItem);
 		} catch (Exception e) {
@@ -206,10 +206,75 @@ public class FacilityAdminAbilityController {
 			return ResponseEntity.status(403).build();
 		}
 		try {
-			BorrowedItem updatedBorrowedItem = facilityItemService.updateBorrowedItem(borrowedItemId, borrowedItem);
+			// Find the borrowed item
+			Optional<BorrowedItem> existingBorrowedItemopt = facilityItemService.getBorrowedItemById(borrowedItemId);
+			BorrowedItem existingBorrowedItem = existingBorrowedItemopt.get();
+			if (existingBorrowedItem == null) {
+				return ResponseEntity.notFound().build();
+			}
+
+			// Find the corresponding facility item
+			Optional<FacilityItem> itemOpt = facilityItemService
+					.getFacilityItemById(existingBorrowedItem.getBorrowedID());
+			FacilityItem item = itemOpt.get();
+			if (item == null) {
+				return ResponseEntity.status(400).build();
+			}
+
+			// Increase the stock by 1
+			item.setQuantity(item.getQuantity() + 1);
+			facilityItemService.updateFacilityItem(item.getItemID(), item);
+
+			// Mark the borrowed item as returned
+			existingBorrowedItem.setStatus("returned");
+			BorrowedItem updatedBorrowedItem = facilityItemService.updateBorrowedItem(borrowedItemId,
+					existingBorrowedItem);
 			return ResponseEntity.ok(updatedBorrowedItem);
 		} catch (RuntimeException e) {
 			return ResponseEntity.notFound().build();
+		}
+	}
+
+	@GetMapping("/{id}/pending-hostellers")
+	public ResponseEntity<List<HostellerFacilityProfile>> getPendingHostellers(HttpServletRequest request,
+			@PathVariable int id) {
+		if (!isFacilityAdminAuthorized(request, id)) {
+			return ResponseEntity.status(403).build();
+		}
+
+		List<HostellerFacilityProfile> pendingProfiles = hostellerFacilityProfileService.getProfilesWithNullStatus();
+		if (pendingProfiles.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(pendingProfiles);
+	}
+
+	@PutMapping("/{id}/hosteller-profile/{profileId}")
+	public ResponseEntity<HostellerFacilityProfile> updateHostellerFacilityProfile(HttpServletRequest request,
+			@PathVariable int id, @PathVariable int profileId, @RequestBody HostellerFacilityProfile updatedProfile) {
+
+		if (!isFacilityAdminAuthorized(request, id)) {
+			return ResponseEntity.status(403).build();
+		}
+
+		try {
+			Optional<HostellerFacilityProfile> existingProfileOpt = hostellerFacilityProfileService
+					.getHostellerFacilityProfileById(profileId);
+			if (existingProfileOpt.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			}
+
+			HostellerFacilityProfile existingProfile = existingProfileOpt.get();
+
+			// Update fields based on the request body
+			existingProfile.setStatus(updatedProfile.getStatus());
+			existingProfile.setDescription(updatedProfile.getDescription());
+
+			HostellerFacilityProfile savedProfile = hostellerFacilityProfileService
+					.saveHostellerFacilityProfile(existingProfile);
+			return ResponseEntity.ok(savedProfile);
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body(null);
 		}
 	}
 
