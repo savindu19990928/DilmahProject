@@ -54,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
                         .requestMatchers("/facilityadmin/**").hasRole("FACILITYADMIN")
                         .requestMatchers("/security/**").hasRole("SECURITYPERSONAL")
+                        .requestMatchers("/reports/**").hasAnyRole("WARDEN", "SUPERADMIN")
                         .requestMatchers(HttpMethod.PUT, "/complaint/**").hasRole("HOSTELLER")
                         .requestMatchers(HttpMethod.PATCH, "/complaint/**").hasRole("HOSTELLER")
                         .requestMatchers(HttpMethod.POST, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
