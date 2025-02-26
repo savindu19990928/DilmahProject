@@ -74,6 +74,6 @@ public class FacilityItemService {
     }
 
     public List<BorrowedItem> getBorrowedItemsByHostellerUserId(String userId, int facilityId) {
-        return borrowedItemRepository.findByHostellerFacilityProfile_Hosteller_UserIDAndFacility_Id(userId, facilityId);
+        return borrowedItemRepository.findByHostellerFacilityProfile_Hosteller_UserIDAndHostellerFacilityProfile_Facility_FacilityID(userId, facilityId);
     }
 }
