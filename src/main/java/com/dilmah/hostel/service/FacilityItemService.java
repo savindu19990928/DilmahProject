@@ -61,7 +61,6 @@ public class FacilityItemService {
         return borrowedItemRepository.findById(id).map(borrowedItem -> {
             borrowedItem.setHostellerFacilityProfile(borrowedItemDetails.getHostellerFacilityProfile());
             borrowedItem.setFacilityItem(borrowedItemDetails.getFacilityItem());
-            borrowedItem.setName(borrowedItemDetails.getName());
             borrowedItem.setDescription(borrowedItemDetails.getDescription());
             borrowedItem.setStatus(borrowedItemDetails.getStatus());
             borrowedItem.setReturnedAt(borrowedItemDetails.getReturnedAt());

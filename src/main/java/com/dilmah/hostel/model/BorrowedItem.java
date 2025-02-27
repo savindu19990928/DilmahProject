@@ -20,9 +20,6 @@ public class BorrowedItem {
     @JoinColumn(name = "itemID", nullable = false)
     private FacilityItem facilityItem;
 
-    @Column(length = 15, nullable = false)
-    private String name;
-
     @Column(length = 225, nullable = false)
     private String description;
 
@@ -59,14 +56,6 @@ public class BorrowedItem {
 	public void setFacilityItem(FacilityItem facilityItem) {
 		this.facilityItem = facilityItem;
 	}
-
-	public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getDescription() {
         return description;
