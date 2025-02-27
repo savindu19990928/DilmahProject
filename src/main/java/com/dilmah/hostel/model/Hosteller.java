@@ -34,6 +34,9 @@ public class Hosteller extends User {
     
     @Column(nullable = false)
     private BigDecimal salary;
+    
+    @Column(nullable = true)
+    private String photo;
 
 	public Room getRoom() {
 		return room;
@@ -89,5 +92,13 @@ public class Hosteller extends User {
 
 	public void setOffense(List<Offense> offense) {
 		Offense = offense;
+	}
+
+	public String getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(String photo) {
+		this.photo = photo;
 	}
 }
