@@ -29,7 +29,7 @@ public class JasperReportController {
 
 			// Set headers for file download
 			HttpHeaders headers = new HttpHeaders();
-			headers.add("Content-Disposition", "inline; filename=" + reportName + ".pdf");
+			headers.setContentDispositionFormData("attachment", reportName + ".pdf");
 			headers.add("Content-Type", "application/pdf");
 
 			return new ResponseEntity<>(pdfReport, headers, HttpStatus.OK);
