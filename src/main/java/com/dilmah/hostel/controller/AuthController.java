@@ -48,7 +48,7 @@ public class AuthController {
             String ipAddress = ClientIpExtractor.getClientIp(request);
 
             String token = jwtUtil.generateToken(username, role, ipAddress);
-            return ResponseEntity.ok(Map.of("token", token));
+            return ResponseEntity.ok(Map.of("token", token, "role", role));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
         } catch (Exception e) {
