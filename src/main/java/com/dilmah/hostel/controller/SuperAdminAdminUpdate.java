@@ -102,6 +102,7 @@ public class SuperAdminAdminUpdate {
 			String contactDetails = requestBody.get("contactDetails");
 			String roomId = requestBody.get("room");
 			String salaryStr = requestBody.get("salary");
+			String photoStr = requestBody.get("photo");
 
 			// Guardian details
 			String guardianName = requestBody.get("guardianName");
@@ -116,6 +117,7 @@ public class SuperAdminAdminUpdate {
 			if (fullName != null) {
 				existingHosteller.setFullName(fullName);
 			}
+			
 			if (contactDetails != null) {
 				existingHosteller.setContactDetails(contactDetails);
 			}
@@ -141,6 +143,10 @@ public class SuperAdminAdminUpdate {
 				} catch (NumberFormatException e) {
 					return "Invalid salary value provided.";
 				}
+			}
+			
+			if (photoStr != null) {
+				existingHosteller.setPhoto(photoStr);
 			}
 
 			// Creating and assigning a new Guardian

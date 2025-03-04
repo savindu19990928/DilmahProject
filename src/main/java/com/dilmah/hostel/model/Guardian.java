@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -22,6 +24,7 @@ public class Guardian {
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime assigned;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "hosteller")
 	private Hosteller hosteller;
