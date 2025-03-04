@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dilmah.hostel.model.FoodOrder;
@@ -82,18 +83,49 @@ public class HostellerAbilityController {
 		}
 	}
 
-	@PostMapping("/foodorder/{orderType}")
+	@GetMapping("/todayfood")
+	public ResponseEntity<FoodOrder> getFirstFoodOrder(@RequestHeader("Authorization") String token,
+			@RequestParam String orderedDate) {
+		try {
+			// Validate if token is provided
+			if (token == null || token.isEmpty()) {
+				return ResponseEntity.badRequest().build();
+			}
+
+			// Extract username from token
+			String hostellerId = jwtTokenUtil.extractUsername(token);
+
+			if (hostellerId == null || hostellerId.isEmpty()) {
+				return ResponseEntity.badRequest().build();
+			}
+			LocalDateTime orderedDateTime = LocalDateTime.parse((String) orderedDate + "T00:00:01");
+			FoodOrder foodOrder = foodOrderService.getFirstFoodOrderByDateAndUser(hostellerId, orderedDateTime);
+			return ResponseEntity.ok(foodOrder);
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+	@PostMapping("/foodorder")
 	public ResponseEntity<FoodOrder> createFoodOrder(@RequestHeader("Authorization") String token,
-			@PathVariable String orderType, @RequestBody Map<String, LocalDateTime> requestBody) {
+			@RequestBody Map<String, Object> requestBody) {
 		try {
 			String hostellerId = jwtTokenUtil.extractUsername(token);
 			Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
+
+			// Extract orderType and orderedDate from requestBody
+			String orderType = (String) requestBody.get("orderType");
+			LocalDateTime orderedDate = LocalDateTime.parse((String) requestBody.get("orderedDate") + "T00:00:01");
+
 			FoodOrder foodOrder = new FoodOrder();
 			foodOrder.setOrderType(orderType);
-			foodOrder.setOrderedDate(requestBody.get("orderedDate"));
+			foodOrder.setOrderedDate(orderedDate);
 			foodOrder.setUser(hosteller);
+
 			FoodOrder createdFoodOrder = foodOrderService.saveFoodOrder(foodOrder);
 			return ResponseEntity.status(HttpStatus.CREATED).body(createdFoodOrder);
+		 } catch (RuntimeException e) {
+	            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage())).badRequest().build();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
