@@ -9,163 +9,181 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dilmah.hostel.model.Guardian;
 import com.dilmah.hostel.model.Hosteller;
 import com.dilmah.hostel.model.Room;
 import com.dilmah.hostel.model.SecurityPersonal;
 import com.dilmah.hostel.model.SuperAdmin;
 import com.dilmah.hostel.model.Warden;
+import com.dilmah.hostel.service.GuardianService;
 import com.dilmah.hostel.service.RoomDetailsService;
 import com.dilmah.hostel.service.UserDetailsService;
 
 @RestController
 @RequestMapping("/superadmin")
 public class SuperAdminAdminUpdate {
-	
-    @Autowired
-    private UserDetailsService userService;
-    
-    @Autowired
-    private RoomDetailsService roomService;
-	
-    @PutMapping("/updatesuperadmin")
-    public String updateSuperAdmin(@RequestBody Map<String, String> requestBody) {
-        try {
-            String username = requestBody.get("userID");
-            String fullName = requestBody.get("fullName");
-            String contactDetails = requestBody.get("contactDetails");
-            
-            SuperAdmin existingSuperAdmin = userService.findSuperAdminByUsername(username);
 
-            if (existingSuperAdmin == null) {
-                return "SuperAdmin not found with userID: " + username;
-            }
-            
-            if (fullName != null) {
-                existingSuperAdmin.setFullName(fullName);
-            }
-            if (contactDetails != null) {
-                existingSuperAdmin.setContactDetails(contactDetails);
-            }
-            
-            userService.updateUser(username, existingSuperAdmin, "superAdmin");
-            return "SuperAdmin updated successfully!";
-        } catch (Exception e) {
-            return "Update failed: " + e.getMessage();
-        }
-    }
-    
-    @PutMapping("/updatewarden")
+	@Autowired
+	private UserDetailsService userService;
+
+	@Autowired
+	private RoomDetailsService roomService;
+
+	@Autowired
+	private GuardianService guardianService;
+
+	@PutMapping("/updatesuperadmin")
+	public String updateSuperAdmin(@RequestBody Map<String, String> requestBody) {
+		try {
+			String username = requestBody.get("userID");
+			String fullName = requestBody.get("fullName");
+			String contactDetails = requestBody.get("contactDetails");
+
+			SuperAdmin existingSuperAdmin = userService.findSuperAdminByUsername(username);
+
+			if (existingSuperAdmin == null) {
+				return "SuperAdmin not found with userID: " + username;
+			}
+
+			if (fullName != null) {
+				existingSuperAdmin.setFullName(fullName);
+			}
+			if (contactDetails != null) {
+				existingSuperAdmin.setContactDetails(contactDetails);
+			}
+
+			userService.updateUser(username, existingSuperAdmin, "superAdmin");
+			return "SuperAdmin updated successfully!";
+		} catch (Exception e) {
+			return "Update failed: " + e.getMessage();
+		}
+	}
+
+	@PutMapping("/updatewarden")
 	public String updateWarden(@RequestBody Map<String, String> requestBody) {
-	    try {
-            String username = requestBody.get("userID");
-            String fullName = requestBody.get("fullName");
-            String contactDetails = requestBody.get("contactDetails");
-            String inChargeName = requestBody.get("inChargeName");
-            String inChargeMobile = requestBody.get("inChargeMobile");
-            
-	        Warden existingWarden = userService.findWardenByUsername(username);
-	        
-	        if (existingWarden == null) {
-	            return "Warden not found with userID: " + username;
-	        }
-	        
-	        if (fullName != null) {
-	            existingWarden.setFullName(fullName);
-	        }
-	        if (contactDetails != null) {
-	            existingWarden.setContactDetails(contactDetails);
-	        }
-	        if (inChargeName != null) {
-	            existingWarden.setInChargeName(inChargeName);
-	        }
-	        if (inChargeMobile != null) {
-	            existingWarden.setInChargeMobile(inChargeMobile);
-	        }
+		try {
+			String username = requestBody.get("userID");
+			String fullName = requestBody.get("fullName");
+			String contactDetails = requestBody.get("contactDetails");
+			String inChargeName = requestBody.get("inChargeName");
+			String inChargeMobile = requestBody.get("inChargeMobile");
 
-	        userService.updateUser(username,existingWarden,"warden");
-	        return "Warden updated successfully!";
-	    } catch (Exception e) {
-	        return "Update failed: " + e.getMessage();
-	    }
+			Warden existingWarden = userService.findWardenByUsername(username);
+
+			if (existingWarden == null) {
+				return "Warden not found with userID: " + username;
+			}
+
+			if (fullName != null) {
+				existingWarden.setFullName(fullName);
+			}
+			if (contactDetails != null) {
+				existingWarden.setContactDetails(contactDetails);
+			}
+			if (inChargeName != null) {
+				existingWarden.setInChargeName(inChargeName);
+			}
+			if (inChargeMobile != null) {
+				existingWarden.setInChargeMobile(inChargeMobile);
+			}
+
+			userService.updateUser(username, existingWarden, "warden");
+			return "Warden updated successfully!";
+		} catch (Exception e) {
+			return "Update failed: " + e.getMessage();
+		}
 	}
-	
-    @PutMapping("/updatehosteller")
+
+	@PutMapping("/updatehosteller")
 	public String updateHosteller(@RequestBody Map<String, String> requestBody) {
-	    try {
-	        String username = requestBody.get("userID");
-	        String fullName = requestBody.get("fullName");
-	        String contactDetails = requestBody.get("contactDetails");
-	        String roomId = requestBody.get("room");
-	        String salaryStr = requestBody.get("salary");
+		try {
+			String username = requestBody.get("userID");
+			String fullName = requestBody.get("fullName");
+			String contactDetails = requestBody.get("contactDetails");
+			String roomId = requestBody.get("room");
+			String salaryStr = requestBody.get("salary");
 
-	        Hosteller existingHosteller = userService.findHostellerByUsername(username);
+			// Guardian details
+			String guardianName = requestBody.get("guardianName");
+			String guardianContact = requestBody.get("guardianContact");
 
-	        if (existingHosteller == null) {
-	            return "Hosteller not found with userID: " + username;
-	        }
+			Hosteller existingHosteller = userService.findHostellerByUsername(username);
 
-	        if (fullName != null) {
-	            existingHosteller.setFullName(fullName);
-	        }
-	        if (contactDetails != null) {
-	            existingHosteller.setContactDetails(contactDetails);
-	        }
-	        
-	        if (roomId != null) {
-	        	Long roomNumber = Long.parseLong(roomId);
-	            Room room = roomService.findRoomByRoomNumber(roomNumber);
-	            if (room == null) {
-	                return "Room not found with roomID: " + roomId;
-	            }
-	            Room oldRoom = existingHosteller.getRoom();
-	            oldRoom.setAvailability(oldRoom.getAvailability() + 1);
-	            roomService.saveRoom(oldRoom);
-	            room.setAvailability(room.getAvailability() - 1);
-	            roomService.saveRoom(room);
-	            existingHosteller.setRoom(room);
-	        }
+			if (existingHosteller == null) {
+				return "Hosteller not found with userID: " + username;
+			}
 
-	        if (salaryStr != null) {
-	            try {
-	                BigDecimal salary = new BigDecimal(salaryStr);
-	                existingHosteller.setSalary(salary);
-	            } catch (NumberFormatException e) {
-	                return "Invalid salary value provided.";
-	            }
-	        }
+			if (fullName != null) {
+				existingHosteller.setFullName(fullName);
+			}
+			if (contactDetails != null) {
+				existingHosteller.setContactDetails(contactDetails);
+			}
 
-	        userService.updateUser(username, existingHosteller, "hosteller");
-	        return "Hosteller updated successfully!";
-	    } catch (Exception e) {
-	        return "Update failed: " + e.getMessage();
-	    }
+			if (roomId != null) {
+				Long roomNumber = Long.parseLong(roomId);
+				Room room = roomService.findRoomByRoomNumber(roomNumber);
+				if (room == null) {
+					return "Room not found with roomID: " + roomId;
+				}
+				Room oldRoom = existingHosteller.getRoom();
+				oldRoom.setAvailability(oldRoom.getAvailability() + 1);
+				roomService.saveRoom(oldRoom);
+				room.setAvailability(room.getAvailability() - 1);
+				roomService.saveRoom(room);
+				existingHosteller.setRoom(room);
+			}
+
+			if (salaryStr != null) {
+				try {
+					BigDecimal salary = new BigDecimal(salaryStr);
+					existingHosteller.setSalary(salary);
+				} catch (NumberFormatException e) {
+					return "Invalid salary value provided.";
+				}
+			}
+
+			// Creating and assigning a new Guardian
+			if (guardianName != null && guardianContact != null) {
+				Guardian newGuardian = new Guardian();
+				newGuardian.setName(guardianName);
+				newGuardian.setMobile(guardianContact);
+				newGuardian.setHosteller(existingHosteller);
+				guardianService.saveGuardian(newGuardian);
+			}
+
+			userService.updateUser(username, existingHosteller, "hosteller");
+			return "Hosteller updated successfully with a new guardian!";
+		} catch (Exception e) {
+			return "Update failed: " + e.getMessage();
+		}
 	}
-	
-    @PutMapping("/updatesecurity")
-	public String updateSecurityPersonal(@RequestBody Map<String, String> requestBody) {
-	    try {
-	        String username = requestBody.get("userID");
-	        String fullName = requestBody.get("fullName");
-	        String contactDetails = requestBody.get("contactDetails");
-	        
-	        SecurityPersonal existingSecurityAdmin = userService.findSecurityPersonalByUsername(username);
 
-	        if (existingSecurityAdmin == null) {
-	            return "Security Personal not found with userID: " + username;
-	        }
-	        
-	        if (fullName != null) {
-	            existingSecurityAdmin.setFullName(fullName);
-	        }
-	        if (contactDetails != null) {
-	            existingSecurityAdmin.setContactDetails(contactDetails);
-	        }
-	        
-	        userService.updateUser(username, existingSecurityAdmin, "securitypersonal");
-	        return "Security Personal updated successfully!";
-	    } catch (Exception e) {
-	        return "Update failed: " + e.getMessage();
-	    }
+	@PutMapping("/updatesecurity")
+	public String updateSecurityPersonal(@RequestBody Map<String, String> requestBody) {
+		try {
+			String username = requestBody.get("userID");
+			String fullName = requestBody.get("fullName");
+			String contactDetails = requestBody.get("contactDetails");
+
+			SecurityPersonal existingSecurityAdmin = userService.findSecurityPersonalByUsername(username);
+
+			if (existingSecurityAdmin == null) {
+				return "Security Personal not found with userID: " + username;
+			}
+
+			if (fullName != null) {
+				existingSecurityAdmin.setFullName(fullName);
+			}
+			if (contactDetails != null) {
+				existingSecurityAdmin.setContactDetails(contactDetails);
+			}
+
+			userService.updateUser(username, existingSecurityAdmin, "securitypersonal");
+			return "Security Personal updated successfully!";
+		} catch (Exception e) {
+			return "Update failed: " + e.getMessage();
+		}
 	}
 
 }
