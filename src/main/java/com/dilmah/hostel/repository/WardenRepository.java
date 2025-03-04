@@ -10,4 +10,5 @@ import com.dilmah.hostel.model.Warden;
 @RepositoryRestResource(exported = false)
 public interface WardenRepository extends JpaRepository<Warden, String> {
 	 Optional<Warden> findByUserID(String userID);
+	 Optional<Warden> findTopByOrderByUserIDAsc();
 }
