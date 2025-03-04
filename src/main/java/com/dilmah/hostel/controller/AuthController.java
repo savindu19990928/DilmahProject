@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.dilmah.hostel.model.Guardian;
+import com.dilmah.hostel.model.Hosteller;
 import com.dilmah.hostel.model.SuperAdmin;
 import com.dilmah.hostel.model.User;
+import com.dilmah.hostel.service.GuardianService;
 import com.dilmah.hostel.service.UserDetailsService;
 import com.dilmah.hostel.util.ClientIpExtractor;
 import com.dilmah.hostel.util.JwtTokenUtil;
@@ -36,6 +39,9 @@ public class AuthController {
 	@Autowired
 	private UserDetailsService userService;
 
+	@Autowired
+	private GuardianService guardianService;
+
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody Map<String, String> requestBody, HttpServletRequest request) {
 		try {
@@ -55,11 +61,16 @@ public class AuthController {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
 			}
 
-			// Prepare response
 			Map<String, Object> response = new HashMap<>();
 			response.put("token", token);
 			response.put("role", role);
 			response.put("user", user);
+
+			// If the user is a Hosteller, fetch their latest guardian
+			if (user instanceof Hosteller) {
+				Guardian guardian = guardianService.getLatestGuardianByHostellerUserId(username);
+				response.put("guardian", guardian);
+			}
 
 			return ResponseEntity.ok(response);
 		} catch (BadCredentialsException e) {
