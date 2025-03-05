@@ -43,7 +43,12 @@ public class HostellerAbilityController {
 		try {
 			Warden warden = userService.findFirstWarden();
 			if (warden != null) {
-				return ResponseEntity.ok(warden.getInChargeMobile());
+				String mobile = warden.getInChargeMobile();
+				if (mobile == null || mobile == "") {
+					return ResponseEntity.ok(warden.getContactDetails());
+				} else {
+					return ResponseEntity.ok(warden.getInChargeMobile());
+				}
 			} else {
 				return ResponseEntity.status(404).body("Warden not found!");
 			}
