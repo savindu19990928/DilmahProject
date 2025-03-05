@@ -58,8 +58,7 @@ public class FoodOrderService {
 		foodOrderRepository.deleteById(id);
 	}
 
-	public FoodOrder getFirstFoodOrderByDateAndUser(String userID, LocalDateTime orderedDate) {
-		return foodOrderRepository.findTopByUserUserIDAndOrderedDateOrderByOrderIDAsc(userID, orderedDate).orElseThrow(
-				() -> new RuntimeException("No food order found for user " + userID + " on " + orderedDate));
+	public List<FoodOrder> getFoodOrdersByDateAndUser(String userID, LocalDateTime orderedDate) {
+		return foodOrderRepository.findByUserUserIDAndOrderedDate(userID, orderedDate);
 	}
 }

@@ -84,7 +84,7 @@ public class HostellerAbilityController {
 	}
 
 	@GetMapping("/todayfood")
-	public ResponseEntity<FoodOrder> getFirstFoodOrder(@RequestHeader("Authorization") String token,
+	public ResponseEntity<List<FoodOrder>> getFoodOrdersByDate(@RequestHeader("Authorization") String token,
 			@RequestParam String orderedDate) {
 		try {
 			// Validate if token is provided
@@ -92,17 +92,26 @@ public class HostellerAbilityController {
 				return ResponseEntity.badRequest().build();
 			}
 
-			// Extract username from token
+			// Extract user ID from token
 			String hostellerId = jwtTokenUtil.extractUsername(token);
-
 			if (hostellerId == null || hostellerId.isEmpty()) {
 				return ResponseEntity.badRequest().build();
 			}
-			LocalDateTime orderedDateTime = LocalDateTime.parse((String) orderedDate + "T00:00:01");
-			FoodOrder foodOrder = foodOrderService.getFirstFoodOrderByDateAndUser(hostellerId, orderedDateTime);
-			return ResponseEntity.ok(foodOrder);
+
+			// Convert orderedDate to LocalDateTime (ensuring date format)
+			LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDate + "T00:00:01");
+
+			// Retrieve food orders for the user on the specified date
+			List<FoodOrder> foodOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDateTime);
+
+			// Check if any orders exist
+			if (foodOrders.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			}
+
+			return ResponseEntity.ok(foodOrders);
 		} catch (Exception e) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
@@ -124,8 +133,9 @@ public class HostellerAbilityController {
 
 			FoodOrder createdFoodOrder = foodOrderService.saveFoodOrder(foodOrder);
 			return ResponseEntity.status(HttpStatus.CREATED).body(createdFoodOrder);
-		 } catch (RuntimeException e) {
-	            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage())).badRequest().build();
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage())).badRequest()
+					.build();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}

@@ -13,6 +13,6 @@ import com.dilmah.hostel.model.FoodOrder;
 public interface FoodOrderRepository extends JpaRepository<FoodOrder, Long> {
 	List<FoodOrder> findByOrderedDateBetween(LocalDateTime start, LocalDateTime end);
 	List<FoodOrder> findByUserUserID(String username);
-	Optional<FoodOrder> findTopByUserUserIDAndOrderedDateOrderByOrderIDAsc(String userID, LocalDateTime orderedDate);
+	List<FoodOrder> findByUserUserIDAndOrderedDate(String userID, LocalDateTime orderedDate);
 	Optional<FoodOrder> findByUserUserIDAndOrderTypeAndOrderedDate(String userID, String orderType, LocalDateTime orderedDate);
 }
