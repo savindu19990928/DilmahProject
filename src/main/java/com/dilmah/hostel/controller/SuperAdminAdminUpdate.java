@@ -62,7 +62,7 @@ public class SuperAdminAdminUpdate {
 				existingSuperAdmin.setPassword(password);
 			}
 
-			userService.updateUser(username, existingSuperAdmin, "superAdmin");
+			userService.updateUser(username, existingSuperAdmin, "superadmin");
 			return "SuperAdmin updated successfully!";
 		} catch (Exception e) {
 			return "Update failed: " + e.getMessage();

@@ -42,7 +42,7 @@ public class HostellerAbilityController {
 
 	@Autowired
 	private FoodOrderService foodOrderService;
-	
+
 	@Autowired
 	private RoomDetailsService roomService;
 
@@ -145,7 +145,7 @@ public class HostellerAbilityController {
 			if (hostellerId == null || hostellerId.isEmpty()) {
 				return ResponseEntity.badRequest().build();
 			}
-			
+
 			Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
 
 			// Extract orderType and orderedDate from requestBody
@@ -168,10 +168,11 @@ public class HostellerAbilityController {
 	}
 
 	@PutMapping("/update")
-	public String updateHosteller(@RequestHeader("Authorization") String token, @RequestBody Map<String, Object> requestBody) {
+	public String updateHosteller(@RequestHeader("Authorization") String token,
+			@RequestBody Map<String, Object> requestBody) {
 		try {
 			String username = jwtTokenUtil.extractUsername(token);
-			
+
 			String fullName = (String) requestBody.get("fullName");
 			String contactDetails = (String) requestBody.get("contactDetails");
 			String roomId = (String) requestBody.get("room");
@@ -196,7 +197,7 @@ public class HostellerAbilityController {
 			if (contactDetails != null && !contactDetails.trim().isEmpty()) {
 				existingHosteller.setContactDetails(contactDetails);
 			}
-			
+
 			if (password != null && !password.trim().isEmpty()) {
 				existingHosteller.setPassword(password);
 			}
@@ -228,14 +229,22 @@ public class HostellerAbilityController {
 				existingHosteller.setPhoto(photoStr);
 			}
 
-			// Creating and assigning a new Guardian
-			if (guardianName != null && !guardianName.trim().isEmpty() &&
-				    guardianContact != null && !guardianContact.trim().isEmpty()) {
-				Guardian newGuardian = new Guardian();
-				newGuardian.setName(guardianName);
-				newGuardian.setMobile(guardianContact);
-				newGuardian.setHosteller(existingHosteller);
-				guardianService.saveGuardian(newGuardian);
+			if (guardianName != null && !guardianName.trim().isEmpty() && guardianContact != null
+					&& !guardianContact.trim().isEmpty()) {
+
+				// Fetch the last assigned guardian for this hosteller
+				Guardian lastGuardian = guardianService.getLatestGuardianByHostellerUserId(username);
+
+				// Check if a new guardian needs to be created
+				if (lastGuardian == null || !lastGuardian.getName().equals(guardianName)
+						|| !lastGuardian.getMobile().equals(guardianContact)) {
+
+					Guardian newGuardian = new Guardian();
+					newGuardian.setName(guardianName);
+					newGuardian.setMobile(guardianContact);
+					newGuardian.setHosteller(existingHosteller);
+					guardianService.saveGuardian(newGuardian);
+				}
 			}
 			userService.updateUser(username, existingHosteller, "hosteller");
 			return "Hosteller updated successfully with a new guardian!";
