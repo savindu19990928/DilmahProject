@@ -150,13 +150,13 @@ public class HostellerAbilityController {
 			}
 
 			Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
-
+			System.out.print("orderTypesssssssssssssssssssssssssssssssssss");
 			// Extract orderType and orderedDate from requestBody
 			String orderType = (String) requestBody.get("orderType");
-			System.out.print(orderType);
+			
 			LocalDateTime orderedDate = LocalDateTime.parse((String) requestBody.get("orderedDate"));
 			orderedDate = orderedDate.with(LocalTime.of(0, 0, 1));
-
+			System.out.print(orderType);
 			FoodOrder foodOrder = new FoodOrder();
 			foodOrder.setOrderType(orderType);
 			foodOrder.setOrderedDate(orderedDate);
