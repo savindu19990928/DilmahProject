@@ -116,10 +116,9 @@ public class HostellerAbilityController {
 			if (hostellerId == null || hostellerId.isEmpty()) {
 				return ResponseEntity.badRequest().build();
 			}
-
+			System.out.print("saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 			// Convert orderedDate to LocalDateTime (ensuring date format)
 			LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDate);
-			orderedDateTime = orderedDateTime.with(LocalTime.of(0, 0, 1));
 			System.out.print(orderedDateTime);
 			// Retrieve food orders for the user on the specified date
 			List<FoodOrder> foodOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDateTime);
