@@ -107,8 +107,9 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Collections.singletonList("*")); // 🔹 Set specific frontend origins
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Forwarded-For", "X-Real-IP"));
-        config.setAllowCredentials(true); // 🔹 Enable credentials (JWT authentication)
+        config.setAllowCredentials(true);
+
+        config.applyPermitDefaultValues();
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
