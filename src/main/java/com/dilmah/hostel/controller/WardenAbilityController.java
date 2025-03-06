@@ -71,17 +71,13 @@ public class WardenAbilityController {
 			if (contactDetails != null && !contactDetails.trim().isEmpty()) {
 				existingWarden.setContactDetails(contactDetails);
 			}
-			if (inChargeName != null && !inChargeName.trim().isEmpty()) {
+			if ((inChargeName != null && !inChargeName.trim().isEmpty()) && (inChargeMobile != null && !inChargeMobile.trim().isEmpty())) {
 				existingWarden.setInChargeName(inChargeName);
-			}
-			if (inChargeMobile != null && !inChargeMobile.trim().isEmpty()) {
 				existingWarden.setInChargeMobile(inChargeMobile);
 			}
-			
 			if (password != null && !password.trim().isEmpty()) {
 				existingWarden.setPassword(password);
 			}
-
 			userService.updateUser(username, existingWarden, "warden");
 			return "Warden updated successfully!";
 		} catch (Exception e) {
