@@ -3,6 +3,7 @@ package com.dilmah.hostel.controller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -116,12 +117,16 @@ public class HostellerAbilityController {
 			if (hostellerId == null || hostellerId.isEmpty()) {
 				return ResponseEntity.badRequest().build();
 			}
+
 			// Convert orderedDate to LocalDateTime (ensuring date format)
-			LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDate);
-			System.out.print(orderedDateTime + "ssssssssssssssss");
+	        String orderedDateString = "2025-03-05 00:00:00.000";
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
+	        LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDateString, formatter)
+	                                                 .with(LocalTime.of(0, 0, 1));
 			// Retrieve food orders for the user on the specified date
 			List<FoodOrder> foodOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDateTime);
-			System.out.print(foodOrders.get(0));
+
 			// Check if any orders exist
 			if (foodOrders.isEmpty()) {
 				return ResponseEntity.notFound().build();
