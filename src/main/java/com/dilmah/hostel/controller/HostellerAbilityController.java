@@ -4,8 +4,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -104,7 +108,7 @@ public class HostellerAbilityController {
 	}
 
 	@GetMapping("/todayfood")
-	public ResponseEntity<List<FoodOrder>> getFoodOrdersByDate(@RequestHeader("Authorization") String token,
+	public ResponseEntity<List<Map<String, Object>>> getFoodOrdersByDate(@RequestHeader("Authorization") String token,
 			@RequestParam String orderedDate) {
 		try {
 			// Validate if token is provided
@@ -118,21 +122,29 @@ public class HostellerAbilityController {
 				return ResponseEntity.badRequest().build();
 			}
 
-			// Convert orderedDate to LocalDateTime (ensuring date format)
-	        String orderedDateString = "2025-03-05 00:00:00.000";
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+			// Convert orderedDate to LocalDateTime
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+			LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDate, formatter).with(LocalTime.of(0, 0, 1));
 
-	        LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDateString, formatter)
-	                                                 .with(LocalTime.of(0, 0, 1));
 			// Retrieve food orders for the user on the specified date
 			List<FoodOrder> foodOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDateTime);
 
-			// Check if any orders exist
-			if (foodOrders.isEmpty()) {
-				return ResponseEntity.notFound().build();
+			// Define default food items
+			List<Map<String, Object>> foodList = new ArrayList<>();
+			List<String> orderedFoodNames = foodOrders.stream().map(FoodOrder::getOrderType)
+					.collect(Collectors.toList());
+
+			// Create response structure
+			List<String> defaultFoodItems = Arrays.asList("breakfast", "lunch", "dinner");
+
+			for (String item : defaultFoodItems) {
+				Map<String, Object> foodItem = new HashMap<>();
+				foodItem.put("label", item);
+				foodItem.put("isChecked", orderedFoodNames.contains(item)); // Check if ordered
+				foodList.add(foodItem);
 			}
 
-			return ResponseEntity.ok(foodOrders);
+			return ResponseEntity.ok(foodList);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
@@ -154,10 +166,10 @@ public class HostellerAbilityController {
 			}
 
 			Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
-			
+
 			// Extract orderType and orderedDate from requestBody
 			String orderType = (String) requestBody.get("orderType");
-			
+
 			LocalDateTime orderedDate = LocalDateTime.parse((String) requestBody.get("orderedDate"));
 			orderedDate = orderedDate.with(LocalTime.of(0, 0, 1));
 			FoodOrder foodOrder = new FoodOrder();
@@ -207,8 +219,8 @@ public class HostellerAbilityController {
 			}
 
 			if (password != null && !password.trim().isEmpty()) {
-	            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	            password = passwordEncoder.encode(password);
+				PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+				password = passwordEncoder.encode(password);
 				existingHosteller.setPassword(password);
 			}
 
