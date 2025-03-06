@@ -108,7 +108,7 @@ public class HostellerAbilityController {
 	}
 
 	@GetMapping("/todayfood")
-	public ResponseEntity<List<Map<String, Object>>> getFoodOrdersByDate(@RequestHeader("Authorization") String token,
+	public ResponseEntity<List<String>> getFoodOrdersByDate(@RequestHeader("Authorization") String token,
 			@RequestParam String orderedDate) {
 		try {
 			// Validate if token is provided
@@ -129,22 +129,11 @@ public class HostellerAbilityController {
 			// Retrieve food orders for the user on the specified date
 			List<FoodOrder> foodOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDateTime);
 
-			// Define default food items
-			List<Map<String, Object>> foodList = new ArrayList<>();
+			// Extract only the ordered food types
 			List<String> orderedFoodNames = foodOrders.stream().map(FoodOrder::getOrderType)
 					.collect(Collectors.toList());
 
-			// Create response structure
-			List<String> defaultFoodItems = Arrays.asList("breakfast", "lunch", "dinner");
-
-			for (String item : defaultFoodItems) {
-				Map<String, Object> foodItem = new HashMap<>();
-				foodItem.put("label", item);
-				foodItem.put("isChecked", orderedFoodNames.contains(item)); // Check if ordered
-				foodList.add(foodItem);
-			}
-
-			return ResponseEntity.ok(foodList);
+			return ResponseEntity.ok(orderedFoodNames);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
@@ -180,7 +169,7 @@ public class HostellerAbilityController {
 
 			// Retrieve existing orders for the user on the selected date
 			List<FoodOrder> existingOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDate);
-			List<String> existingOrderTypes = existingOrders.stream().map(FoodOrder::getOrderType).toList(); 
+			List<String> existingOrderTypes = existingOrders.stream().map(FoodOrder::getOrderType).toList();
 
 			// List to store successfully created orders
 			List<FoodOrder> createdOrders = new ArrayList<>();
