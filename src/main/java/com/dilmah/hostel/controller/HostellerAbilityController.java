@@ -188,15 +188,15 @@ public class HostellerAbilityController {
 				return "Hosteller not found with userID: " + username;
 			}
 
-			if (fullName != null || fullName != "") {
+			if (fullName != null && fullName.isEmpty()) {
 				existingHosteller.setFullName(fullName);
 			}
 
-			if (contactDetails != null || contactDetails != "") {
+			if (contactDetails != null && contactDetails.isEmpty()) {
 				existingHosteller.setContactDetails(contactDetails);
 			}
 
-			if (roomId != null || roomId != "") {
+			if (roomId != null && roomId.isEmpty()) {
 				Long roomNumber = Long.parseLong(roomId);
 				Room room = roomService.findRoomByRoomNumber(roomNumber);
 				if (room == null) {
@@ -210,7 +210,7 @@ public class HostellerAbilityController {
 				existingHosteller.setRoom(room);
 			}
 
-			if (salaryStr != null || salaryStr != "") {
+			if (salaryStr != null && salaryStr.isEmpty()) {
 				try {
 					BigDecimal salary = new BigDecimal(salaryStr);
 					existingHosteller.setSalary(salary);
@@ -219,12 +219,12 @@ public class HostellerAbilityController {
 				}
 			}
 
-			if (photoStr != null || photoStr != "") {
+			if (photoStr != null && photoStr.isEmpty()) {
 				existingHosteller.setPhoto(photoStr);
 			}
 
 			// Creating and assigning a new Guardian
-			if (guardianName != null && guardianContact != null || guardianName != "" && guardianContact != "") {
+			if (guardianName != null && guardianContact != null && guardianName.isEmpty() && guardianContact.isEmpty()) {
 				Guardian newGuardian = new Guardian();
 				newGuardian.setName(guardianName);
 				newGuardian.setMobile(guardianContact);
