@@ -52,14 +52,17 @@ public class SecurityConfig {
 			throws Exception {
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login").permitAll()
-						.requestMatchers("/auth/register").permitAll().requestMatchers("/warden/**").hasRole("WARDEN")
-						.requestMatchers("/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN").requestMatchers("/inout/**")
-						.hasRole("HOSTELLER").requestMatchers("/hosteller/**").hasRole("HOSTELLER")
-						.requestMatchers("/superadmin/**").hasRole("SUPERADMIN").requestMatchers("/facilityadmin/**")
-						.hasRole("FACILITYADMIN").requestMatchers("/security/**").hasRole("SECURITYPERSONAL")
-						.requestMatchers("/reports/**").hasAnyRole("WARDEN", "SUPERADMIN")
-						.requestMatchers(HttpMethod.PUT, "/complaint/**").hasRole("HOSTELLER")
-						.requestMatchers(HttpMethod.PATCH, "/complaint/**").hasRole("HOSTELLER")
+						.requestMatchers("/auth/register").permitAll()
+						.requestMatchers("/warden/**").hasRole("WARDEN")
+						.requestMatchers("/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+						.requestMatchers("/inout/**").hasAnyRole("WARDEN", "SECURITYPERSONAL", "HOSTELLER")
+						.requestMatchers("/hosteller/**").hasRole("HOSTELLER")
+						.requestMatchers("/superadmin/**").hasAnyRole("SUPERADMIN", "HOSTELLER")
+						.requestMatchers("/facilityadmin/**")
+						.hasRole("FACILITYADMIN").requestMatchers("/security/**")
+						.hasRole("SECURITYPERSONAL").requestMatchers("/reports/**")
+						.hasAnyRole("WARDEN", "SUPERADMIN").requestMatchers(HttpMethod.PUT, "/complaint/**")
+						.hasRole("HOSTELLER").requestMatchers(HttpMethod.PATCH, "/complaint/**").hasRole("HOSTELLER")
 						.requestMatchers(HttpMethod.POST, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
 						.requestMatchers(HttpMethod.DELETE, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
 						.requestMatchers(HttpMethod.PUT, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
@@ -98,16 +101,16 @@ public class SecurityConfig {
 	}
 
 	@Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("https://ff-debug-service-frontend-pro-ygxkweukma-uc.a.run.app")); // 🔹 Set specific frontend origins
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowCredentials(true);
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(Collections.singletonList("*")); // 🔹 Set specific frontend origins
+		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+		config.setAllowCredentials(true);
 
-        config.applyPermitDefaultValues();
-        
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+		config.applyPermitDefaultValues();
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return source;
+	}
 }

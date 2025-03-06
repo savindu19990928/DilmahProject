@@ -27,11 +27,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dilmah.hostel.model.Facility;
 import com.dilmah.hostel.model.FoodOrder;
 import com.dilmah.hostel.model.Guardian;
 import com.dilmah.hostel.model.Hosteller;
 import com.dilmah.hostel.model.Room;
 import com.dilmah.hostel.model.Warden;
+import com.dilmah.hostel.service.FacilityService;
 import com.dilmah.hostel.service.FoodOrderService;
 import com.dilmah.hostel.service.GuardianService;
 import com.dilmah.hostel.service.RoomDetailsService;
@@ -56,6 +58,9 @@ public class HostellerAbilityController {
 
 	@Autowired
 	private GuardianService guardianService;
+	
+    @Autowired
+    private FacilityService facilityService;
 
 	@GetMapping("/warden")
 	public ResponseEntity<?> getWarden() {
@@ -75,6 +80,17 @@ public class HostellerAbilityController {
 			return ResponseEntity.status(500).body("Error fetching Warden: " + e.getMessage());
 		}
 	}
+	
+    @GetMapping("/facilities")
+    public ResponseEntity<?> getAllFacilities() {
+        try {
+            List<Facility> facilities = facilityService.getAllFacilities();
+            return ResponseEntity.ok(facilities);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching facilities: " + e.getMessage());
+        }
+    }
 
 	@GetMapping("/foodorder")
 	public ResponseEntity<?> getFoodOrdersByUsername(@RequestHeader("Authorization") String token) {
