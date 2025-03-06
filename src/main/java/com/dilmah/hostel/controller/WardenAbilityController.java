@@ -79,6 +79,8 @@ public class WardenAbilityController {
 				existingWarden.setInChargeMobile(null);
 			}
 			if (password != null && !password.trim().isEmpty()) {
+	            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	            password = passwordEncoder.encode(password);
 				existingWarden.setPassword(password);
 			}
 			userService.updateUser(username, existingWarden, "warden");

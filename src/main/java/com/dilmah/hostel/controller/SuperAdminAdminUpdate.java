@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -59,6 +61,8 @@ public class SuperAdminAdminUpdate {
 			}
 			
 			if (password != null && !password.trim().isEmpty()) {
+	            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	            password = passwordEncoder.encode(password);
 				existingSuperAdmin.setPassword(password);
 			}
 
