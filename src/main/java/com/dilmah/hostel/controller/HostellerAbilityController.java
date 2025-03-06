@@ -119,6 +119,7 @@ public class HostellerAbilityController {
 			System.out.print("saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 			// Convert orderedDate to LocalDateTime (ensuring date format)
 			LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDate);
+			System.out.print("saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 			System.out.print(orderedDateTime);
 			// Retrieve food orders for the user on the specified date
 			List<FoodOrder> foodOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDateTime);
