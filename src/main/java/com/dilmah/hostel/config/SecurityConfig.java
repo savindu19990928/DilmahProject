@@ -100,7 +100,7 @@ public class SecurityConfig {
 	@Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("*")); // 🔹 Set specific frontend origins
+        config.setAllowedOrigins(Arrays.asList("https://ff-debug-service-frontend-pro-ygxkweukma-uc.a.run.app")); // 🔹 Set specific frontend origins
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowCredentials(true);
 
