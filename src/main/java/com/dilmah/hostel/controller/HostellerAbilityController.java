@@ -151,39 +151,65 @@ public class HostellerAbilityController {
 	}
 
 	@PostMapping("/foodorder")
-	public ResponseEntity<FoodOrder> createFoodOrder(@RequestHeader("Authorization") String token,
+	public ResponseEntity<?> createFoodOrder(@RequestHeader("Authorization") String token,
 			@RequestBody Map<String, Object> requestBody) {
 		try {
 			// Validate if token is provided
 			if (token == null || token.isEmpty()) {
-				return ResponseEntity.badRequest().build();
+				return ResponseEntity.badRequest().body(Map.of("error", "Authorization token is missing"));
 			}
 
 			// Extract user ID from token
 			String hostellerId = jwtTokenUtil.extractUsername(token);
 			if (hostellerId == null || hostellerId.isEmpty()) {
-				return ResponseEntity.badRequest().build();
+				return ResponseEntity.badRequest().body(Map.of("error", "Invalid token or user ID"));
 			}
 
 			Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
 
-			// Extract orderType and orderedDate from requestBody
-			String orderType = (String) requestBody.get("orderType");
+			// Extract orderedDate from requestBody
+			String orderedDateString = (String) requestBody.get("orderedDate");
+			LocalDateTime orderedDate = LocalDateTime.parse(orderedDateString).with(LocalTime.of(0, 0, 1));
 
-			LocalDateTime orderedDate = LocalDateTime.parse((String) requestBody.get("orderedDate"));
-			orderedDate = orderedDate.with(LocalTime.of(0, 0, 1));
-			FoodOrder foodOrder = new FoodOrder();
-			foodOrder.setOrderType(orderType);
-			foodOrder.setOrderedDate(orderedDate);
-			foodOrder.setUser(hosteller);
+			// Extract the list of orders
+			List<Map<String, Object>> ordersList = (List<Map<String, Object>>) requestBody.get("orders");
 
-			FoodOrder createdFoodOrder = foodOrderService.saveFoodOrder(foodOrder);
-			return ResponseEntity.status(HttpStatus.CREATED).body(createdFoodOrder);
+			if (ordersList == null || ordersList.isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("error", "No food orders provided"));
+			}
+
+			// Retrieve existing orders for the user on the selected date
+			List<FoodOrder> existingOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDate);
+			List<String> existingOrderTypes = existingOrders.stream().map(FoodOrder::getOrderType).toList(); 
+
+			// List to store successfully created orders
+			List<FoodOrder> createdOrders = new ArrayList<>();
+
+			// Process each selected order where isChecked = true
+			for (Map<String, Object> order : ordersList) {
+				String label = (String) order.get("label");
+				boolean isChecked = (boolean) order.get("isChecked");
+
+				// Skip if the order is unchecked or already exists
+				if (isChecked && !existingOrderTypes.contains(label)) {
+					FoodOrder foodOrder = new FoodOrder();
+					foodOrder.setOrderType(label);
+					foodOrder.setOrderedDate(orderedDate);
+					foodOrder.setUser(hosteller);
+
+					createdOrders.add(foodOrderService.saveFoodOrder(foodOrder));
+				}
+			}
+
+			if (createdOrders.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "No new orders were added"));
+			}
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(createdOrders);
 		} catch (RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage())).badRequest()
-					.build();
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Invalid request format"));
 		}
 	}
 
