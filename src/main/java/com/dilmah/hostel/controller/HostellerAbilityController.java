@@ -224,16 +224,14 @@ public class HostellerAbilityController {
 			}
 
 			// Creating and assigning a new Guardian
-			if ((guardianName != null && guardianContact != null) && (!guardianName.isEmpty() && !guardianContact.isEmpty())) {
+			if (guardianName != null && !guardianName.isEmpty() &&
+				    guardianContact != null && !guardianContact.isEmpty()) {
 				Guardian newGuardian = new Guardian();
 				newGuardian.setName(guardianName);
 				newGuardian.setMobile(guardianContact);
 				newGuardian.setHosteller(existingHosteller);
 				guardianService.saveGuardian(newGuardian);
 			}
-			
-			
-
 			userService.updateUser(username, existingHosteller, "hosteller");
 			return "Hosteller updated successfully with a new guardian!";
 		} catch (Exception e) {
