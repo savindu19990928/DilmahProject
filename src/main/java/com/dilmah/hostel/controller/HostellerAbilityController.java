@@ -153,6 +153,7 @@ public class HostellerAbilityController {
 
 			// Extract orderType and orderedDate from requestBody
 			String orderType = (String) requestBody.get("orderType");
+			System.out.print(orderType);
 			LocalDateTime orderedDate = LocalDateTime.parse((String) requestBody.get("orderedDate"));
 			orderedDate = orderedDate.with(LocalTime.of(0, 0, 1));
 
