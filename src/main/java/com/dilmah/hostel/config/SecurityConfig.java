@@ -112,6 +112,10 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
         configuration.setAllowCredentials(true); // Allow credentials (cookies, HTTP authentication, etc.)
 
+        // Handle preflight requests (OPTIONS)
+        configuration.addExposedHeader("Access-Control-Allow-Origin");
+        configuration.addExposedHeader("Access-Control-Allow-Credentials");
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Apply this to all endpoints
 
