@@ -16,10 +16,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -44,31 +48,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/auth/register").permitAll()
-                        .requestMatchers("/warden/**").hasRole("WARDEN")
-                        .requestMatchers("/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-                        .requestMatchers("/inout/**").hasRole("HOSTELLER")
-                        .requestMatchers("/hosteller/**").hasRole("HOSTELLER")
-                        .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
-                        .requestMatchers("/facilityadmin/**").hasRole("FACILITYADMIN")
-                        .requestMatchers("/security/**").hasRole("SECURITYPERSONAL")
-                        .requestMatchers("/reports/**").hasAnyRole("WARDEN", "SUPERADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/complaint/**").hasRole("HOSTELLER")
-                        .requestMatchers(HttpMethod.PATCH, "/complaint/**").hasRole("HOSTELLER")
-                        .requestMatchers(HttpMethod.POST, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-                        .requestMatchers(HttpMethod.GET, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN", "HOSTELLER")
-                        .requestMatchers(HttpMethod.PUT, "/foodmenu/**").denyAll()
-                        .requestMatchers(HttpMethod.PATCH, "/foodmenu/**").denyAll()
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(withDefaults())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(rateLimitingFilter(), UsernamePasswordAuthenticationFilter.class);
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable and customize CORS
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/auth/register").permitAll()
+                .requestMatchers("/warden/**").hasRole("WARDEN")
+                .requestMatchers("/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                .requestMatchers("/inout/**").hasRole("HOSTELLER")
+                .requestMatchers("/hosteller/**").hasRole("HOSTELLER")
+                .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
+                .requestMatchers("/facilityadmin/**").hasRole("FACILITYADMIN")
+                .requestMatchers("/security/**").hasRole("SECURITYPERSONAL")
+                .requestMatchers("/reports/**").hasAnyRole("WARDEN", "SUPERADMIN")
+                .requestMatchers(HttpMethod.PUT, "/complaint/**").hasRole("HOSTELLER")
+                .requestMatchers(HttpMethod.PATCH, "/complaint/**").hasRole("HOSTELLER")
+                .requestMatchers(HttpMethod.POST, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                .requestMatchers(HttpMethod.PUT, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                .requestMatchers(HttpMethod.GET, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN", "HOSTELLER")
+                .requestMatchers(HttpMethod.PUT, "/foodmenu/**").denyAll()
+                .requestMatchers(HttpMethod.PATCH, "/foodmenu/**").denyAll()
+                .anyRequest().authenticated()
+            )
+            .httpBasic(withDefaults())
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(rateLimitingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -94,8 +99,22 @@ public class SecurityConfig {
     }
 
     private Bucket createNewBucket() {
-    	return Bucket.builder()
-    			.addLimit(limit -> limit.capacity(50).refillGreedy(10, Duration.ofSeconds(1)))
-    			.build();
+        return Bucket.builder()
+                .addLimit(limit -> limit.capacity(50).refillGreedy(10, Duration.ofSeconds(1)))
+                .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*")); // Allow all origins
+        configuration.setAllowedMethods(Arrays.asList("*")); // Allow all methods (GET, POST, PUT, DELETE, etc.)
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
+        configuration.setAllowCredentials(true); // Allow credentials (cookies, HTTP authentication, etc.)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Apply this to all endpoints
+
+        return source;
     }
 }
