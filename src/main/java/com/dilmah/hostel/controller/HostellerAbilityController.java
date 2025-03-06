@@ -177,6 +177,7 @@ public class HostellerAbilityController {
 			String roomId = (String) requestBody.get("room");
 			String salaryStr = (String) requestBody.get("salary");
 			String photoStr = (String) requestBody.get("photo");
+			String password = (String) requestBody.get("password");
 
 			// Guardian details
 			String guardianName = (String) requestBody.get("guardianName");
@@ -188,15 +189,19 @@ public class HostellerAbilityController {
 				return "Hosteller not found with userID: " + username;
 			}
 
-			if (fullName != null && !fullName.isEmpty()) {
+			if (fullName != null && !fullName.trim().isEmpty()) {
 				existingHosteller.setFullName(fullName);
 			}
 
-			if (contactDetails != null && !contactDetails.isEmpty()) {
+			if (contactDetails != null && !contactDetails.trim().isEmpty()) {
 				existingHosteller.setContactDetails(contactDetails);
 			}
+			
+			if (password != null && !password.trim().isEmpty()) {
+				existingHosteller.setPassword(password);
+			}
 
-			if (roomId != null && !roomId.isEmpty()) {
+			if (roomId != null && !roomId.trim().isEmpty()) {
 				Long roomNumber = Long.parseLong(roomId);
 				Room room = roomService.findRoomByRoomNumber(roomNumber);
 				if (room == null) {
@@ -210,7 +215,7 @@ public class HostellerAbilityController {
 				existingHosteller.setRoom(room);
 			}
 
-			if (salaryStr != null && !salaryStr.isEmpty()) {
+			if (salaryStr != null && !salaryStr.trim().isEmpty()) {
 				try {
 					BigDecimal salary = new BigDecimal(salaryStr);
 					existingHosteller.setSalary(salary);
@@ -219,13 +224,13 @@ public class HostellerAbilityController {
 				}
 			}
 
-			if (photoStr != null && !photoStr.isEmpty()) {
+			if (photoStr != null && !photoStr.trim().isEmpty()) {
 				existingHosteller.setPhoto(photoStr);
 			}
 
 			// Creating and assigning a new Guardian
-			if (guardianName != null && !guardianName.isEmpty() &&
-				    guardianContact != null && !guardianContact.isEmpty()) {
+			if (guardianName != null && !guardianName.trim().isEmpty() &&
+				    guardianContact != null && !guardianContact.trim().isEmpty()) {
 				Guardian newGuardian = new Guardian();
 				newGuardian.setName(guardianName);
 				newGuardian.setMobile(guardianContact);

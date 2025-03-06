@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,7 @@ import com.dilmah.hostel.model.Warden;
 import com.dilmah.hostel.service.GuardianService;
 import com.dilmah.hostel.service.RoomDetailsService;
 import com.dilmah.hostel.service.UserDetailsService;
+import com.dilmah.hostel.util.JwtTokenUtil;
 
 @RestController
 @RequestMapping("/superadmin")
@@ -31,13 +33,17 @@ public class SuperAdminAdminUpdate {
 
 	@Autowired
 	private GuardianService guardianService;
+	
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
 
-	@PutMapping("/updatesuperadmin")
-	public String updateSuperAdmin(@RequestBody Map<String, String> requestBody) {
+	@PutMapping("/update")
+	public String updateSuperAdmin(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> requestBody) {
 		try {
-			String username = requestBody.get("userID");
+			String username = jwtTokenUtil.extractUsername(token);
 			String fullName = requestBody.get("fullName");
 			String contactDetails = requestBody.get("contactDetails");
+			String password = requestBody.get("password");
 
 			SuperAdmin existingSuperAdmin = userService.findSuperAdminByUsername(username);
 
@@ -45,11 +51,15 @@ public class SuperAdminAdminUpdate {
 				return "SuperAdmin not found with userID: " + username;
 			}
 
-			if (fullName != null) {
+			if (fullName != null && !fullName.trim().isEmpty()) {
 				existingSuperAdmin.setFullName(fullName);
 			}
-			if (contactDetails != null) {
+			if (contactDetails != null && !contactDetails.trim().isEmpty()) {
 				existingSuperAdmin.setContactDetails(contactDetails);
+			}
+			
+			if (password != null && !password.trim().isEmpty()) {
+				existingSuperAdmin.setPassword(password);
 			}
 
 			userService.updateUser(username, existingSuperAdmin, "superAdmin");

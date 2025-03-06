@@ -191,6 +191,10 @@ public class UserDetailsService implements org.springframework.security.core.use
 		if (updatedUser.getContactDetails() != null) {
 			existingUser.setContactDetails(updatedUser.getContactDetails());
 		}
+		
+		if (updatedUser.getPassword() != null) {
+			existingUser.setPassword(updatedUser.getPassword());
+		}
 
 		switch (userType.toLowerCase()) {
 		case "warden":

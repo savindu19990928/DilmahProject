@@ -50,7 +50,7 @@ public class WardenAbilityController {
 	@Autowired
 	private FoodOrderService foodService;
 
-	@PutMapping("/updatewarden")
+	@PutMapping("/update")
 	public String updateWarden(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> requestBody) {
 		try {
 			String username = jwtTokenUtil.extractUsername(token);
@@ -58,30 +58,28 @@ public class WardenAbilityController {
 			String contactDetails = requestBody.get("contactDetails");
 			String inChargeName = requestBody.get("inChargeName");
 			String inChargeMobile = requestBody.get("inChargeMobile");
-			String isInCharge = requestBody.get("isInCharge");
+			String password = requestBody.get("password");
 
 			Warden existingWarden = userService.findWardenByUsername(username);
 
 			if (existingWarden == null) {
 				return "Warden not found with userID: " + username;
 			}
-
-			if (fullName != null) {
+			if (fullName != null && !fullName.trim().isEmpty()) {
 				existingWarden.setFullName(fullName);
 			}
-			if (contactDetails != null) {
+			if (contactDetails != null && !contactDetails.trim().isEmpty()) {
 				existingWarden.setContactDetails(contactDetails);
 			}
-			if (inChargeName != null) {
+			if (inChargeName != null && !inChargeName.trim().isEmpty()) {
 				existingWarden.setInChargeName(inChargeName);
 			}
-			if (inChargeMobile != null) {
+			if (inChargeMobile != null && !inChargeMobile.trim().isEmpty()) {
 				existingWarden.setInChargeMobile(inChargeMobile);
 			}
 			
-			if (isInCharge != "Yes") {
-				existingWarden.setInChargeName(null);
-				existingWarden.setInChargeMobile(null);
+			if (password != null && !password.trim().isEmpty()) {
+				existingWarden.setPassword(password);
 			}
 
 			userService.updateUser(username, existingWarden, "warden");
