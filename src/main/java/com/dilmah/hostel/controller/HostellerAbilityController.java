@@ -2,6 +2,7 @@ package com.dilmah.hostel.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -152,7 +153,8 @@ public class HostellerAbilityController {
 
 			// Extract orderType and orderedDate from requestBody
 			String orderType = (String) requestBody.get("orderType");
-			LocalDateTime orderedDate = LocalDateTime.parse((String) requestBody.get("orderedDate") + "T00:00:01");
+			LocalDateTime orderedDate = LocalDateTime.parse((String) requestBody.get("orderedDate"));
+			orderedDate = orderedDate.with(LocalTime.of(0, 0, 1));
 
 			FoodOrder foodOrder = new FoodOrder();
 			foodOrder.setOrderType(orderType);
