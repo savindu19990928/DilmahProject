@@ -118,8 +118,9 @@ public class HostellerAbilityController {
 			}
 
 			// Convert orderedDate to LocalDateTime (ensuring date format)
-			LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDate + "T00:00:01");
-
+			LocalDateTime orderedDateTime = LocalDateTime.parse(orderedDate);
+			orderedDateTime = orderedDateTime.with(LocalTime.of(0, 0, 1));
+			System.out.print(orderedDateTime);
 			// Retrieve food orders for the user on the specified date
 			List<FoodOrder> foodOrders = foodOrderService.getFoodOrdersByDateAndUser(hostellerId, orderedDateTime);
 
@@ -150,13 +151,12 @@ public class HostellerAbilityController {
 			}
 
 			Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
-			System.out.print("orderTypesssssssssssssssssssssssssssssssssss");
+			
 			// Extract orderType and orderedDate from requestBody
 			String orderType = (String) requestBody.get("orderType");
 			
 			LocalDateTime orderedDate = LocalDateTime.parse((String) requestBody.get("orderedDate"));
 			orderedDate = orderedDate.with(LocalTime.of(0, 0, 1));
-			System.out.print(orderType);
 			FoodOrder foodOrder = new FoodOrder();
 			foodOrder.setOrderType(orderType);
 			foodOrder.setOrderedDate(orderedDate);
