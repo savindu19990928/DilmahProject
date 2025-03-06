@@ -17,9 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -35,90 +34,87 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-	private final ConcurrentMap<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Bucket> buckets = new ConcurrentHashMap<>();
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
-	}
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
-			throws Exception {
-		http.csrf(csrf -> csrf.disable())
-				.cors(cors -> cors.configurationSource(
-						(org.springframework.web.cors.CorsConfigurationSource) corsConfigurationSource())) // Enable
-																											// CORS
-																											// globally
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login").permitAll()
-						.requestMatchers("/auth/register").permitAll().requestMatchers("/warden/**").hasRole("WARDEN")
-						.requestMatchers("/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN").requestMatchers("/inout/**")
-						.hasRole("HOSTELLER").requestMatchers("/hosteller/**").hasRole("HOSTELLER")
-						.requestMatchers("/superadmin/**").hasRole("SUPERADMIN").requestMatchers("/facilityadmin/**")
-						.hasRole("FACILITYADMIN").requestMatchers("/security/**").hasRole("SECURITYPERSONAL")
-						.requestMatchers("/reports/**").hasAnyRole("WARDEN", "SUPERADMIN")
-						.requestMatchers(HttpMethod.PUT, "/complaint/**").hasRole("HOSTELLER")
-						.requestMatchers(HttpMethod.PATCH, "/complaint/**").hasRole("HOSTELLER")
-						.requestMatchers(HttpMethod.POST, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-						.requestMatchers(HttpMethod.DELETE, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-						.requestMatchers(HttpMethod.PUT, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-						.requestMatchers(HttpMethod.PATCH, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
-						.requestMatchers(HttpMethod.GET, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN", "HOSTELLER")
-						.requestMatchers(HttpMethod.PUT, "/foodmenu/**").denyAll()
-						.requestMatchers(HttpMethod.PATCH, "/foodmenu/**").denyAll().anyRequest().authenticated())
-				.httpBasic(withDefaults())
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(rateLimitingFilter(), UsernamePasswordAuthenticationFilter.class);
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
+        http.csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ FIXED: Correctly use the CORS configuration source
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/warden/**").hasRole("WARDEN")
+                        .requestMatchers("/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                        .requestMatchers("/inout/**").hasRole("HOSTELLER")
+                        .requestMatchers("/hosteller/**").hasRole("HOSTELLER")
+                        .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
+                        .requestMatchers("/facilityadmin/**").hasRole("FACILITYADMIN")
+                        .requestMatchers("/security/**").hasRole("SECURITYPERSONAL")
+                        .requestMatchers("/reports/**").hasAnyRole("WARDEN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/complaint/**").hasRole("HOSTELLER")
+                        .requestMatchers(HttpMethod.PATCH, "/complaint/**").hasRole("HOSTELLER")
+                        .requestMatchers(HttpMethod.POST, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN")
+                        .requestMatchers(HttpMethod.GET, "/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN", "HOSTELLER")
+                        .requestMatchers(HttpMethod.PUT, "/foodmenu/**").denyAll()
+                        .requestMatchers(HttpMethod.PATCH, "/foodmenu/**").denyAll()
+                        .anyRequest().authenticated())
+                .httpBasic(withDefaults())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(rateLimitingFilter(), UsernamePasswordAuthenticationFilter.class);
 
-		return http.build();
-	}
+        return http.build();
+    }
 
-	@Bean
-	public OncePerRequestFilter rateLimitingFilter() {
-		return new OncePerRequestFilter() {
-			@Override
-			protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-					FilterChain filterChain) throws ServletException, IOException {
+    @Bean
+    public OncePerRequestFilter rateLimitingFilter() {
+        return new OncePerRequestFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain filterChain) throws ServletException, IOException {
+                String clientIP = request.getRemoteAddr();
+                Bucket bucket = buckets.computeIfAbsent(clientIP, k -> createNewBucket());
 
-				String clientIP = request.getRemoteAddr();
-				Bucket bucket = buckets.computeIfAbsent(clientIP, k -> createNewBucket());
+                if (bucket.tryConsume(1)) {
+                    filterChain.doFilter(request, response);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().write("Too many requests. Please try again later.");
+                }
+            }
+        };
+    }
 
-				if (bucket.tryConsume(1)) {
-					filterChain.doFilter(request, response);
-				} else {
-					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					response.getWriter().write("Too many requests. Please try again later.");
-				}
-			}
-		};
-	}
+    private Bucket createNewBucket() {
+        return Bucket.builder()
+                .addLimit(limit -> limit.capacity(50).refillGreedy(10, Duration.ofSeconds(1)))
+                .build();
+    }
 
-	private Bucket createNewBucket() {
-		return Bucket.builder().addLimit(limit -> limit.capacity(50).refillGreedy(10, Duration.ofSeconds(1))).build();
-	}
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() { // ✅ FIXED: Correct type
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Collections.singletonList("*")); // Allow all origins
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(Collections.singletonList("*"));
+        config.setAllowCredentials(true);
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Collections.singletonList("*")); // Allow all origins
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-		configuration.setAllowedHeaders(Collections.singletonList("*"));
-		configuration.setAllowCredentials(true); // Important for authentication headers
-
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration); // Apply to all endpoints
-
-		return (CorsConfigurationSource) source;
-	}
-
-	@Bean
-	public CorsFilter corsFilter() {
-		return new CorsFilter((org.springframework.web.cors.CorsConfigurationSource) corsConfigurationSource());
-	}
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 }
