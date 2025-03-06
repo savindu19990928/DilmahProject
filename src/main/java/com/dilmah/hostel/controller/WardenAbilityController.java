@@ -74,6 +74,9 @@ public class WardenAbilityController {
 			if ((inChargeName != null && !inChargeName.trim().isEmpty()) && (inChargeMobile != null && !inChargeMobile.trim().isEmpty())) {
 				existingWarden.setInChargeName(inChargeName);
 				existingWarden.setInChargeMobile(inChargeMobile);
+			} else {
+				existingWarden.setInChargeName(null);
+				existingWarden.setInChargeMobile(null);
 			}
 			if (password != null && !password.trim().isEmpty()) {
 				existingWarden.setPassword(password);
