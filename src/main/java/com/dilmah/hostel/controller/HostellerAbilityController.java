@@ -168,19 +168,19 @@ public class HostellerAbilityController {
 	}
 
 	@PutMapping("/updatehosteller")
-	public String updateHosteller(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> requestBody) {
+	public String updateHosteller(@RequestHeader("Authorization") String token, @RequestBody Map<String, Object> requestBody) {
 		try {
 			String username = jwtTokenUtil.extractUsername(token);
 			
-			String fullName = requestBody.get("fullName");
-			String contactDetails = requestBody.get("contactDetails");
-			String roomId = requestBody.get("room");
-			String salaryStr = requestBody.get("salary");
-			String photoStr = requestBody.get("photo");
+			String fullName = (String) requestBody.get("fullName");
+			String contactDetails = (String) requestBody.get("contactDetails");
+			String roomId = (String) requestBody.get("room");
+			String salaryStr = (String) requestBody.get("salary");
+			String photoStr = (String) requestBody.get("photo");
 
 			// Guardian details
-			String guardianName = requestBody.get("guardianName");
-			String guardianContact = requestBody.get("guardianContact");
+			String guardianName = (String) requestBody.get("guardianName");
+			String guardianContact = (String) requestBody.get("guardianContact");
 
 			Hosteller existingHosteller = userService.findHostellerByUsername(username);
 
@@ -224,7 +224,7 @@ public class HostellerAbilityController {
 			}
 
 			// Creating and assigning a new Guardian
-			if (guardianName != null && guardianContact != null && guardianName.isEmpty() && guardianContact.isEmpty()) {
+			if ((guardianName != null && guardianContact != null) && (guardianName.isEmpty() && guardianContact.isEmpty())) {
 				Guardian newGuardian = new Guardian();
 				newGuardian.setName(guardianName);
 				newGuardian.setMobile(guardianContact);
