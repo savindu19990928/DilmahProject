@@ -50,7 +50,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
 			throws Exception {
-		http.csrf(csrf -> csrf.disable()).cors().disable()
+		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login").permitAll()
 						.requestMatchers("/auth/register").permitAll().requestMatchers("/warden/**").hasRole("WARDEN")
 						.requestMatchers("/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN").requestMatchers("/inout/**")
@@ -104,7 +104,7 @@ public class SecurityConfig {
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowCredentials(true);
 
-        config.applyPermitDefaultValues();
+        config.setAllowedHeaders(Collections.singletonList("*"));
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
