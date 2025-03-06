@@ -50,12 +50,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
 			throws Exception {
-		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ FIXED:
-																											// Correctly
-																											// use the
-																											// CORS
-																											// configuration
-																											// source
+		http.csrf(csrf -> csrf.disable()).cors().disable()
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login").permitAll()
 						.requestMatchers("/auth/register").permitAll().requestMatchers("/warden/**").hasRole("WARDEN")
 						.requestMatchers("/fine/**").hasAnyRole("WARDEN", "FACILITYADMIN").requestMatchers("/inout/**")
