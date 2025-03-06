@@ -17,8 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -112,9 +112,14 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
         configuration.setAllowCredentials(true); // Allow credentials (cookies, HTTP authentication, etc.)
 
-        // Handle preflight requests (OPTIONS)
+        // Add necessary exposed headers for preflight
         configuration.addExposedHeader("Access-Control-Allow-Origin");
         configuration.addExposedHeader("Access-Control-Allow-Credentials");
+        configuration.addExposedHeader("Access-Control-Allow-Headers");
+        configuration.addExposedHeader("Access-Control-Allow-Methods");
+
+        // Handle preflight requests (OPTIONS)
+        configuration.setMaxAge(3600L); // Set max age for caching preflight response
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Apply this to all endpoints
