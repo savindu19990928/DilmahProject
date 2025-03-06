@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,7 @@ import com.dilmah.hostel.service.FoodOrderService;
 import com.dilmah.hostel.service.InOutService;
 import com.dilmah.hostel.service.RoomDetailsService;
 import com.dilmah.hostel.service.UserDetailsService;
+import com.dilmah.hostel.util.JwtTokenUtil;
 
 @RestController
 @RequestMapping("/warden")
@@ -35,6 +37,9 @@ public class WardenAbilityController {
 
 	@Autowired
 	private UserDetailsService userService;
+	
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
 
 	@Autowired
 	private InOutService inOutService;
@@ -46,9 +51,9 @@ public class WardenAbilityController {
 	private FoodOrderService foodService;
 
 	@PutMapping("/updatewarden")
-	public String updateWarden(@RequestBody Map<String, String> requestBody) {
+	public String updateWarden(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> requestBody) {
 		try {
-			String username = requestBody.get("userID");
+			String username = jwtTokenUtil.extractUsername(token);
 			String fullName = requestBody.get("fullName");
 			String contactDetails = requestBody.get("contactDetails");
 			String inChargeName = requestBody.get("inChargeName");

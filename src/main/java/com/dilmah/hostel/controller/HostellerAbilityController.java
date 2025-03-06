@@ -1,5 +1,6 @@
 package com.dilmah.hostel.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dilmah.hostel.model.FoodOrder;
+import com.dilmah.hostel.model.Guardian;
 import com.dilmah.hostel.model.Hosteller;
+import com.dilmah.hostel.model.Room;
 import com.dilmah.hostel.model.Warden;
 import com.dilmah.hostel.service.FoodOrderService;
+import com.dilmah.hostel.service.GuardianService;
+import com.dilmah.hostel.service.RoomDetailsService;
 import com.dilmah.hostel.service.UserDetailsService;
 import com.dilmah.hostel.util.JwtTokenUtil;
 
@@ -37,6 +42,12 @@ public class HostellerAbilityController {
 
 	@Autowired
 	private FoodOrderService foodOrderService;
+	
+	@Autowired
+	private RoomDetailsService roomService;
+
+	@Autowired
+	private GuardianService guardianService;
 
 	@GetMapping("/warden")
 	public ResponseEntity<?> getWarden() {
@@ -124,7 +135,17 @@ public class HostellerAbilityController {
 	public ResponseEntity<FoodOrder> createFoodOrder(@RequestHeader("Authorization") String token,
 			@RequestBody Map<String, Object> requestBody) {
 		try {
+			// Validate if token is provided
+			if (token == null || token.isEmpty()) {
+				return ResponseEntity.badRequest().build();
+			}
+
+			// Extract user ID from token
 			String hostellerId = jwtTokenUtil.extractUsername(token);
+			if (hostellerId == null || hostellerId.isEmpty()) {
+				return ResponseEntity.badRequest().build();
+			}
+			
 			Hosteller hosteller = userService.findHostellerByUsername(hostellerId);
 
 			// Extract orderType and orderedDate from requestBody
@@ -143,6 +164,78 @@ public class HostellerAbilityController {
 					.build();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+	}
+
+	@PutMapping("/updatehosteller")
+	public String updateHosteller(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> requestBody) {
+		try {
+			String username = jwtTokenUtil.extractUsername(token);
+			
+			String fullName = requestBody.get("fullName");
+			String contactDetails = requestBody.get("contactDetails");
+			String roomId = requestBody.get("room");
+			String salaryStr = requestBody.get("salary");
+			String photoStr = requestBody.get("photo");
+
+			// Guardian details
+			String guardianName = requestBody.get("guardianName");
+			String guardianContact = requestBody.get("guardianContact");
+
+			Hosteller existingHosteller = userService.findHostellerByUsername(username);
+
+			if (existingHosteller == null) {
+				return "Hosteller not found with userID: " + username;
+			}
+
+			if (fullName != null) {
+				existingHosteller.setFullName(fullName);
+			}
+
+			if (contactDetails != null) {
+				existingHosteller.setContactDetails(contactDetails);
+			}
+
+			if (roomId != null) {
+				Long roomNumber = Long.parseLong(roomId);
+				Room room = roomService.findRoomByRoomNumber(roomNumber);
+				if (room == null) {
+					return "Room not found with roomID: " + roomId;
+				}
+				Room oldRoom = existingHosteller.getRoom();
+				oldRoom.setAvailability(oldRoom.getAvailability() + 1);
+				roomService.saveRoom(oldRoom);
+				room.setAvailability(room.getAvailability() - 1);
+				roomService.saveRoom(room);
+				existingHosteller.setRoom(room);
+			}
+
+			if (salaryStr != null) {
+				try {
+					BigDecimal salary = new BigDecimal(salaryStr);
+					existingHosteller.setSalary(salary);
+				} catch (NumberFormatException e) {
+					return "Invalid salary value provided.";
+				}
+			}
+
+			if (photoStr != null) {
+				existingHosteller.setPhoto(photoStr);
+			}
+
+			// Creating and assigning a new Guardian
+			if (guardianName != null && guardianContact != null) {
+				Guardian newGuardian = new Guardian();
+				newGuardian.setName(guardianName);
+				newGuardian.setMobile(guardianContact);
+				newGuardian.setHosteller(existingHosteller);
+				guardianService.saveGuardian(newGuardian);
+			}
+
+			userService.updateUser(username, existingHosteller, "hosteller");
+			return "Hosteller updated successfully with a new guardian!";
+		} catch (Exception e) {
+			return "Update failed: " + e.getMessage();
 		}
 	}
 
