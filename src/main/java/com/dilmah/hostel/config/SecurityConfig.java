@@ -105,10 +105,10 @@ public class SecurityConfig {
 	@Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:50212", "https://yourfrontend.com")); // 🔹 Set specific frontend origins
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        config.setAllowCredentials(true); // 🔹 Enable credentials (JWT authentication)
+        config.setAllowCredentials(true); // ✅ Allow credentials (JWT)
+        config.setAllowedOrigins(Collections.singletonList("*")); // ✅ Allow all origins
+        config.setAllowedHeaders(Collections.singletonList("*")); // ✅ Allow all headers
+        config.setAllowedMethods(Collections.singletonList("*")); // ✅ Allow all HTTP methods
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
