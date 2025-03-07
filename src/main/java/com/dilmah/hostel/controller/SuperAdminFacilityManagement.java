@@ -250,8 +250,8 @@ public class SuperAdminFacilityManagement {
     }
 
     // Delete Facility by ID
-    @DeleteMapping("/facility/{id}")
-    public ResponseEntity<String> deleteFacility(@PathVariable int id) {
+    @DeleteMapping("/facility")
+    public ResponseEntity<String> deleteFacility(@RequestBody int id) {
         try {
             facilityService.deleteFacility(id);
             return ResponseEntity.status(HttpStatus.OK).body("Facility deleted successfully!");
