@@ -18,10 +18,6 @@ public class Hosteller extends User {
     
 	@JsonIgnore
     @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
-    private List<Complaint> complaints;
-    
-	@JsonIgnore
-    @OneToMany(mappedBy = "hosteller", cascade = CascadeType.DETACH)
     private List<Offense> Offense;
     
 	@JsonIgnore
@@ -60,14 +56,6 @@ public class Hosteller extends User {
 
 	public void setSalary(BigDecimal salary) {
 		this.salary = salary;
-	}
-
-	public List<Complaint> getComplaints() {
-		return complaints;
-	}
-
-	public void setComplaints(List<Complaint> complaints) {
-		this.complaints = complaints;
 	}
 
 	public List<Fine> getFines() {
