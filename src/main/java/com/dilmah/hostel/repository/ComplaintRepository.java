@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.dilmah.hostel.model.Complaint;
 
 @RepositoryRestResource(path = "complaint")
-@PreAuthorize("hasAnyRole('HOSTELLER', 'SUPERADMIN')")
+@PreAuthorize("hasAnyRole('WARDEN', 'HOSTELLER', 'SUPERADMIN', 'SECURITYPERSONAL')")
 public interface ComplaintRepository extends JpaRepository<Complaint, Integer> {
 
 }

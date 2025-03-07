@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.dilmah.hostel.model.Instruction;
 
 @RepositoryRestResource(path = "instruction")
-@PreAuthorize("hasRole('WARDEN')")
+@PreAuthorize("hasAnyRole('WARDEN', 'HOSTELLER', 'SUPERADMIN')")
 public interface InstructionRepository extends JpaRepository<Instruction, Integer> {
 
 }
