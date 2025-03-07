@@ -12,10 +12,6 @@ public class Complaint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int complaintID;
 
-    @ManyToOne
-    @JoinColumn(name = "userID", nullable = false)
-    private Hosteller hosteller;
-
     @Column(length = 15, nullable = false)
     private String type;
 
@@ -32,14 +28,6 @@ public class Complaint {
 
     public void setComplaintID(int complaintID) {
         this.complaintID = complaintID;
-    }
-
-    public Hosteller getHosteller() {
-        return hosteller;
-    }
-
-    public void setHosteller(Hosteller hosteller) {
-        this.hosteller = hosteller;
     }
 
     public String getType() {
